@@ -117,6 +117,7 @@ public class EHttpGet extends Thread implements HttpTask {
 		}
 		String result = "";
 		String curUrl;
+		boolean isSuccess=true;
 		if (null == mUrl) {
 			return;
 		}
@@ -209,7 +210,6 @@ public class EHttpGet extends Thread implements HttpTask {
 			handleCookie(curUrl, headers);
 
 		} catch (Exception e) {
-			e.printStackTrace();
 			Log.i("open", e.getMessage());
 			if ((e instanceof IOException) && https) {
 				result = "unauthorized";
@@ -220,20 +220,18 @@ public class EHttpGet extends Thread implements HttpTask {
 			}
 
 			Log.i("open", "result====" + result);
-
+			isSuccess=false;
 		} finally {
 			if (null != mInStream) {
 				try {
 					mInStream.close();
 				} catch (Exception e) {
-					e.printStackTrace();
 				}
 			}
 			if (null != mConnection) {
 				try {
 					mConnection.disconnect();
 				} catch (Exception e) {
-					e.printStackTrace();
 				}
 			}
 		}
@@ -242,8 +240,11 @@ public class EHttpGet extends Thread implements HttpTask {
 		}
 		mXmlHttpMgr.printResult(mXmlHttpID, curUrl, result);
 		mXmlHttpMgr.onFinish(mXmlHttpID);
-		mXmlHttpMgr.callBack(mXmlHttpID, result, responseCode);
-
+		if (isSuccess) {
+			mXmlHttpMgr.callBack(mXmlHttpID, result, responseCode);
+		}else{
+			mXmlHttpMgr.errorCallBack(mXmlHttpID, result, responseCode);
+		}
 		// 获取cookie值
 		// UexXMLHttpUtils.setCookie(mXmlHttpMgr.getContext(),mXmlHttpMgr.getCookie(curUrl));
 
