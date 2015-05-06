@@ -110,6 +110,7 @@ public class EHttpGet extends Thread implements HttpTask {
 		}
 		String result = "";
 		String curUrl;
+		boolean isSuccess=true;
 		if (null == mUrl) {
 			return;
 		}
@@ -200,7 +201,7 @@ public class EHttpGet extends Thread implements HttpTask {
 			}
 			handleCookie(curUrl, headers);
 		} catch (Exception e) {
-			e.printStackTrace();
+			isSuccess=false;
 			if ((e instanceof IOException) && https) {
 				result = "unauthorized";
 			} else {
@@ -211,7 +212,6 @@ public class EHttpGet extends Thread implements HttpTask {
 				try {
 					mInStream.close();
 				} catch (IOException e) {
-					e.printStackTrace();
 				}
 			}
 			if (null != mConnection) {
@@ -223,7 +223,11 @@ public class EHttpGet extends Thread implements HttpTask {
 		}
 		mXmlHttpMgr.printResult(mXmlHttpID, curUrl, result);
 		mXmlHttpMgr.onFinish(mXmlHttpID);
-		mXmlHttpMgr.callBack(mXmlHttpID, result, responseCode);
+		if (isSuccess) {
+			mXmlHttpMgr.callBack(mXmlHttpID, result, responseCode);
+		}else{
+			mXmlHttpMgr.errorCallBack(mXmlHttpID, result, responseCode);
+		}
 		return;
 	}
 
