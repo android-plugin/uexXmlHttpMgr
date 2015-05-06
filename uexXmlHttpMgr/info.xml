@@ -1,7 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <uexplugins>
-    <plugin uexName="uexXmlHttpMgr" version="3.0.13" build = "13">
-		<info>13:处理网络超时，并回调给网页端</info>
+    <plugin uexName="uexXmlHttpMgr" version="3.0.14" build = "14">
+		<info>14:修复网络出错时的Status code</info>
+		<build>13:处理网络超时，并回调给网页端</build>
 		<build>12:添加getCookie接口</build>
 		<build>11:修复退出应用时ANR问题</build>
 		<build>10:修改onData回调方法中result参数的返回值信息</build>
