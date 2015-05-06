@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<uexplugins>
+      <plugin
+        className="org.zywx.wbpalmstar.plugin.uexmultiHttp.EUExXmlHttpMgr" uexName="uexXmlHttpMgr" >
+        <method name="open" />
+        <method name="setPostData" />
+        <method name="setPutData" />
+		<method name="setCertificate" />
+        <method name="send" />
+		<method name="setInputStream" />
+        <method name="close" />
+		<method name="setHeaders" />
+        <method name="setBody" />
+        <method name="setAppVerify" />
+    </plugin>
+</uexplugins>
