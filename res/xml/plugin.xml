@@ -12,5 +12,6 @@
 		<method name="setHeaders" />
         <method name="setBody" />
         <method name="setAppVerify" />
+        <method name="getCookie" />
     </plugin>
 </uexplugins>
