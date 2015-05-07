@@ -2,6 +2,7 @@ package org.zywx.wbpalmstar.plugin.uexmultiHttp;
 
 import java.io.File;
 import java.net.HttpURLConnection;
+import java.net.SocketTimeoutException;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
@@ -143,8 +144,11 @@ public class EHttpDelete extends Thread implements HttpTask {
 			}
 			handleCookie(curUrl, response);
 		} catch (Exception e) {
-			e.printStackTrace();
-			result = "net work error or timeout!";
+			if (e instanceof SocketTimeoutException) {
+				result = "timeout"; // 网络连接超时。
+			} else {
+				result = "net work error";
+			}
 		} finally {
 			mHttpDelete.abort();
 			mHttpClient.getConnectionManager().shutdown();
