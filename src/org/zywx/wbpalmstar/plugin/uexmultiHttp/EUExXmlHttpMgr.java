@@ -33,6 +33,8 @@ public class EUExXmlHttpMgr extends EUExBase {
 	private Hashtable<String, Boolean> mNeedVerifyMap;
 	private boolean mPrintLog = false;
 
+	public static final String getCookie_onFunction = "uexXmlHttpMgr.cbGetCookie";
+
 	private WWidgetData mCurWData;
 
 	public EUExXmlHttpMgr(Context context, EBrowserView inParent) {
@@ -272,6 +274,23 @@ public class EUExXmlHttpMgr extends EUExBase {
 			xmlHttp.setBody(inContent);
 		}
 	}
+
+	public void getCookie(String parm[]) {
+		if (parm.length != 1) {
+			return;
+		}
+		// String cookie = UexXMLHttpUtils.getCookie(mContext);
+		// Log.i("getCookie", "getCookie=====" + cookie);
+		getCookieCallBack(this.getCookie(parm[0]));
+	}
+
+
+	public void getCookieCallBack(String cookie) {
+		String jsonS = "{" + "\"" + "cookie" + "\"" + ":" + "\"" + cookie
+				+ "\"" + "}";
+		jsCallback(getCookie_onFunction, 0, EUExCallback.F_C_JSON, jsonS);
+	}
+
 
 	public void onFinish(int opCode) {
 		String code = String.valueOf(opCode);
