@@ -2,6 +2,7 @@ package org.zywx.wbpalmstar.plugin.uexmultiHttp;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -220,8 +221,11 @@ public class EHttpPut extends Thread implements HttpTask, HttpClientListener {
 			}
 			handleCookie(curUrl, response);
 		} catch (Exception e) {
-			e.printStackTrace();
-			result = "net work error or timeout!";
+			if (e instanceof SocketTimeoutException) {
+				result = "timeout"; // 网络连接超时。
+			} else {
+				result = "net work error";
+			}
 		} finally {
 			mHttpPut.abort();
 			mHttpClient.getConnectionManager().shutdown();

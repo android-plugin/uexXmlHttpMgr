@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -225,8 +226,11 @@ public class EHttpPost extends Thread implements HttpTask, HttpClientListener {
 			}
 			handleCookie(curUrl, response);
 		} catch (Exception e) {
-			e.printStackTrace();
-			result = "net work error or timeout!";
+			if (e instanceof SocketTimeoutException) {
+				result = "timeout"; // 网络连接超时。
+			} else {
+				result = "net work error";
+			}
 		} finally {
 			mHttpPost.abort();
 			mHttpClient.getConnectionManager().shutdown();
