@@ -42,13 +42,9 @@
 	}
 
 
-	function httpSuccess(opid,state,result){
+	function httpSuccess(opid,state,result,requestCode,response){
 		uexXmlHttpMgr.close(opid);
-		if(opid == 1){
-			document.getElementById('adre').innerHTML  = "opCode:" + opid + "<br> state:" + state  + "<br> result:" + result;
-		}else if(opid == 2){
-			document.getElementById('adre1').innerHTML  = "opCode:" + opid + "<br> state:" + state  + "<br> result:" + result;
-		}
+		alert("OPID:"+opid+"\nSTATE:"+state+"\nRESULT:"+result+"\nREQUESTCODE:"+requestCode+"\nRESPONSE:"+response);
 	}
 
 	window.uexOnload = function(){

@@ -1,7 +1,6 @@
 package org.zywx.wbpalmstar.plugin.uexmultiHttp;
 
 import java.io.File;
-import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -39,7 +38,9 @@ public class EHttpDelete extends Thread implements HttpTask {
 	private boolean mFromRedirects;
 	private Hashtable<String, String> mHttpHead;
 	private HttpDelete mHttpDelete;
-	private int responseCode;
+	private int responseCode = -1;
+	private String responseMessage = "";
+	private Header[] headers;
 
 	public EHttpDelete(String inXmlHttpID, String inUrl, int timeout,
 			EUExXmlHttpMgr euExXmlHttpMgr) {
@@ -87,6 +88,7 @@ public class EHttpDelete extends Thread implements HttpTask {
 			return;
 		}
 		String result = "";
+		boolean isSuccess = false;
 		final String curUrl;
 		if (null == mUrl) {
 			return;
@@ -120,7 +122,9 @@ public class EHttpDelete extends Thread implements HttpTask {
 			mXmlHttpMgr.printHeader(-1, mXmlHttpID, curUrl, true, mHttpDelete.getAllHeaders());
 			HttpResponse response = mHttpClient.execute(mHttpDelete);
 			responseCode = response.getStatusLine().getStatusCode();
-			mXmlHttpMgr.printHeader(responseCode, mXmlHttpID, curUrl, false, response.getAllHeaders());
+			responseMessage = response.getStatusLine().getReasonPhrase();
+			headers = response.getAllHeaders();
+			mXmlHttpMgr.printHeader(responseCode, mXmlHttpID, curUrl, false, headers);
 			switch (responseCode) {
 			case HttpStatus.SC_OK:
 				HttpEntity httpEntity = response.getEntity();
@@ -131,19 +135,14 @@ public class EHttpDelete extends Thread implements HttpTask {
 				byte[] arrayOfByte = XmlHttpUtil.toByteArray(httpEntity);
 				result = new String(arrayOfByte, charSet);
 				httpEntity.consumeContent();
-				break;
-			case HttpStatus.SC_ACCEPTED:
-				result = response.getStatusLine().getReasonPhrase();
-				break;
-			case HttpStatus.SC_NO_CONTENT:
-				result = response.getStatusLine().getReasonPhrase();
+				isSuccess = true;
 				break;
 			default:
-				result = response.getStatusLine().getReasonPhrase();
 				break;
 			}
 			handleCookie(curUrl, response);
 		} catch (Exception e) {
+			isSuccess = false;
 			if (e instanceof SocketTimeoutException) {
 				result = "timeout"; // 网络连接超时。
 			} else {
@@ -158,7 +157,31 @@ public class EHttpDelete extends Thread implements HttpTask {
 			return;
 		}
 		mXmlHttpMgr.printResult(mXmlHttpID, curUrl, result);
-		mXmlHttpMgr.callBack(mXmlHttpID, result, responseCode);
+		if (isSuccess) {
+			JSONObject jsonObject = new JSONObject();
+			try {
+				if (headers != null && headers.length != 0) {
+					JSONObject jsonHeaders = new JSONObject();
+					for (int i = 0; i < headers.length; i++) {
+						jsonHeaders.put(headers[i].getName(),
+								headers[i].getValue());
+					}
+					jsonObject.put(EUExXmlHttpMgr.PARAMS_JSON_KEY_HEADERS,
+							jsonHeaders);
+				}
+				jsonObject.put(EUExXmlHttpMgr.PARAMS_JSON_KEY_STATUSCODE,
+						responseCode);
+				jsonObject.put(EUExXmlHttpMgr.PARAMS_JSON_KEY_STATUSMESSAGE,
+						responseMessage);
+				jsonObject
+						.put(EUExXmlHttpMgr.PARAMS_JSON_KEY_RESPONSEERROR, "");
+			} catch (Exception e) {
+			}
+			mXmlHttpMgr.callBack(mXmlHttpID, result, responseCode,
+					jsonObject.toString());
+		} else {
+			mXmlHttpMgr.errorCallBack(mXmlHttpID, result, responseCode, "");
+		}
 		return;
 	}
 

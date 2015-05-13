@@ -3,17 +3,22 @@ package org.zywx.wbpalmstar.plugin.uexmultiHttp;
 import java.io.EOFException;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 import java.util.zip.GZIPInputStream;
 
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.util.ByteArrayBuffer;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.zywx.wbpalmstar.widgetone.dataservice.WWidgetData;
 
 import android.os.Environment;
@@ -168,5 +173,79 @@ public class XmlHttpUtil {
 			mInStream.close();
 		}
 		return buffer.toByteArray();
+	}
+
+	public static JSONObject getJSONHeaders(Map<String, List<String>> headers)
+			throws JSONException {
+		JSONObject jsonHeaders = new JSONObject();
+		for (Map.Entry<String, List<String>> entry : headers.entrySet()) {
+			String key = entry.getKey();
+			String s = "";
+			List<String> value = entry.getValue();
+			if (null != value) {
+				for (String v : value) {
+					s += v;
+				}
+			}
+			if (key != null) {
+				jsonHeaders.put(key, s);
+			}
+		}
+		return jsonHeaders;
+	}
+
+	public static ByteArrayBuffer getBuffer(boolean gzip, InputStream inputStream) throws IOException {
+		ByteArrayBuffer buffer = new ByteArrayBuffer(1024 * 8);
+		// \&:38, \n:10, \r:13, \':39, \":34, \\:92
+		try {
+			if (gzip) {
+				int lenth = 0;
+				while (lenth != -1) {
+					byte[] buf = new byte[2048];
+					try {
+						lenth = inputStream.read(buf, 0, buf.length);
+						if (lenth != -1) {
+							buffer.append(buf, 0, lenth);
+						}
+					} catch (EOFException e) {
+						int tl = buf.length;
+						int surpl;
+						for (int k = 0; k < tl; ++k) {
+							surpl = buf[k];
+							if (surpl != 0) {
+								buffer.append(surpl);
+							}
+						}
+						lenth = -1;
+					}
+				}
+				int bl = buffer.length();
+				ByteArrayBuffer temBuffer = new ByteArrayBuffer(
+						(int) (bl * 1.4));
+				for (int j = 0; j < bl; ++j) {
+					int cc = buffer.byteAt(j);
+					if (cc == 34 || cc == 39 || cc == 92 || cc == 10
+							|| cc == 13 || cc == 38) {
+						temBuffer.append('\\');
+					}
+					temBuffer.append(cc);
+				}
+				buffer = temBuffer;
+			} else {
+				int c;
+				while ((c = inputStream.read()) != -1) {
+					if (c == 34 || c == 39 || c == 92 || c == 10 || c == 13
+							|| c == 38) {
+						buffer.append('\\');
+					}
+					buffer.append(c);
+				}
+			}
+		} catch (Exception e) {
+			inputStream.close();
+		} finally {
+			inputStream.close();
+		}
+		return buffer;
 	}
 }

@@ -52,7 +52,9 @@ public class EHttpPut extends Thread implements HttpTask, HttpClientListener {
 	
 	static final int BODY_TYPE_TEXT = 0;
 	static final int BODY_TYPE_FILE = 1;
-	private int responseCode;
+	private int responseCode = -1;
+	private String responseMessage = "";
+	private Header[] headers;
 
 	public EHttpPut(String inXmlHttpID, String inUrl, int timeout,
 			EUExXmlHttpMgr euExXmlHttpMgr) {
@@ -132,6 +134,7 @@ public class EHttpPut extends Thread implements HttpTask, HttpClientListener {
 			return;
 		}
 		String result = "";
+		boolean isSuccess = false;
 		final String curUrl;
 		if (null == mUrl) {
 			return;
@@ -187,7 +190,9 @@ public class EHttpPut extends Thread implements HttpTask, HttpClientListener {
 			mXmlHttpMgr.printHeader(-1, mXmlHttpID, curUrl, true, mHttpPut.getAllHeaders());
 			HttpResponse response = mHttpClient.execute(mHttpPut);
 			responseCode = response.getStatusLine().getStatusCode();
-			mXmlHttpMgr.printHeader(responseCode, mXmlHttpID, curUrl, false, response.getAllHeaders());
+			responseMessage = response.getStatusLine().getReasonPhrase();
+			headers = response.getAllHeaders();
+			mXmlHttpMgr.printHeader(responseCode, mXmlHttpID, curUrl, false, headers);
 			switch (responseCode) {
 			case HttpStatus.SC_OK:
 				HttpEntity httpEntity = response.getEntity();
@@ -198,6 +203,7 @@ public class EHttpPut extends Thread implements HttpTask, HttpClientListener {
 				byte[] arrayOfByte = XmlHttpUtil.toByteArray(httpEntity);
 				result = new String(arrayOfByte, charSet);
 				httpEntity.consumeContent();
+				isSuccess = true;
 				break;
 			case HttpStatus.SC_MOVED_PERMANENTLY:
 			case HttpStatus.SC_MOVED_TEMPORARILY:
@@ -212,15 +218,12 @@ public class EHttpPut extends Thread implements HttpTask, HttpClientListener {
 					return;
 				}
 				break;
-			case HttpStatus.SC_UNAUTHORIZED:
-				result = response.getStatusLine().getReasonPhrase();
-				break;
 			default:
-				result = response.getStatusLine().getReasonPhrase();
 				break;
 			}
 			handleCookie(curUrl, response);
 		} catch (Exception e) {
+			isSuccess = false;
 			if (e instanceof SocketTimeoutException) {
 				result = "timeout"; // 网络连接超时。
 			} else {
@@ -235,7 +238,31 @@ public class EHttpPut extends Thread implements HttpTask, HttpClientListener {
 			return;
 		}
 		mXmlHttpMgr.printResult(mXmlHttpID, curUrl, result);
-		mXmlHttpMgr.callBack(mXmlHttpID, result, responseCode);
+		if (isSuccess) {
+			JSONObject jsonObject = new JSONObject();
+			try {
+				if (headers != null && headers.length != 0) {
+					JSONObject jsonHeaders = new JSONObject();
+					for (int i = 0; i < headers.length; i++) {
+						jsonHeaders.put(headers[i].getName(),
+								headers[i].getValue());
+					}
+					jsonObject.put(EUExXmlHttpMgr.PARAMS_JSON_KEY_HEADERS,
+							jsonHeaders);
+				}
+				jsonObject.put(EUExXmlHttpMgr.PARAMS_JSON_KEY_STATUSCODE,
+						responseCode);
+				jsonObject.put(EUExXmlHttpMgr.PARAMS_JSON_KEY_STATUSMESSAGE,
+						responseMessage);
+				jsonObject
+						.put(EUExXmlHttpMgr.PARAMS_JSON_KEY_RESPONSEERROR, "");
+			} catch (Exception e) {
+			}
+			mXmlHttpMgr.callBack(mXmlHttpID, result, responseCode,
+					jsonObject.toString());
+		} else {
+			mXmlHttpMgr.errorCallBack(mXmlHttpID, result, responseCode, "");
+		}
 		return;
 	}
 
