@@ -26,6 +26,11 @@ import android.net.Uri;
 
 public class EUExXmlHttpMgr extends EUExBase {
 
+	public static final String PARAMS_JSON_KEY_HEADERS = "responseHeaders";
+	public static final String PARAMS_JSON_KEY_STATUSCODE = "responseStatusCode";
+	public static final String PARAMS_JSON_KEY_STATUSMESSAGE = "responseStatusMessage";
+	public static final String PARAMS_JSON_KEY_RESPONSESTRING = "responseString";
+	public static final String PARAMS_JSON_KEY_RESPONSEERROR = "responseError";
 	public static final String onFunction = "uexXmlHttpMgr.onData";
 	public static final String post_onFunction = "uexXmlHttpMgr.onPostProgress";
 
@@ -358,15 +363,15 @@ public class EUExXmlHttpMgr extends EUExBase {
 		return mBrwView.getWidgetType();
 	}
 
-	public void callBack(int inOpCode, String inResult, int responseCode) {
+	public void callBack(int inOpCode, String inResult, int responseCode, String response) {
 		String js = SCRIPT_HEADER + "if(" + onFunction + "){" + onFunction
-				+ "(" + inOpCode + "," + 1 + ",'" + inResult +"'," + responseCode + ");}";
+				+ "(" + inOpCode + "," + 1 + ",'" + inResult +"'," + responseCode + ",'" + response + "');}";
 		onCallback(js);
 	}
 
-	public void errorCallBack(int inOpCode, String inResult, int responseCode) {
+	public void errorCallBack(int inOpCode, String inResult, int responseCode, String response) {
 		String js = SCRIPT_HEADER + "if(" + onFunction + "){" + onFunction
-				+ "(" + inOpCode + "," + (-1) + ",'" + inResult + "'," + responseCode + ");}";
+				+ "(" + inOpCode + "," + (-1) + ",'" + inResult + "'," + responseCode + ",'" + response +"');}";
 		onCallback(js);
 	}
 
@@ -383,12 +388,14 @@ public class EUExXmlHttpMgr extends EUExBase {
 	@Override
 	protected boolean clean() {
 		if (null != mXmlHttpMap) {
-			Set<Entry<Object, HttpTask>> entrys = mXmlHttpMap.entrySet();
-			for (Map.Entry<Object, HttpTask> entry : entrys) {
-				HttpTask temp = entry.getValue();
-				temp.cancel();
+			synchronized (mXmlHttpMap) {
+				Set<Entry<Object, HttpTask>> entrys = mXmlHttpMap.entrySet();
+				for (Map.Entry<Object, HttpTask> entry : entrys) {
+					HttpTask temp = entry.getValue();
+					temp.cancel();
+				}
+				mXmlHttpMap.clear();
 			}
-			mXmlHttpMap.clear();
 		}
 		return true;
 	}

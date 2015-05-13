@@ -1,11 +1,11 @@
 package org.zywx.wbpalmstar.plugin.uexmultiHttp;
 
 import java.io.DataOutputStream;
-import java.io.EOFException;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -133,7 +133,11 @@ public class ECusHttpPost extends Thread implements HttpTask,
 	}
 
 	boolean run = false;
-	private int responseCode;
+	private int responseCode = -1;
+	private String responseMessage = "";
+	private String responseError = "";
+	private Map<String, List<String>> headers;
+	private InputStream mErrorInStream;
 
 	protected void doInBackground() {
 		if (mCancelled) {
@@ -149,6 +153,7 @@ public class ECusHttpPost extends Thread implements HttpTask,
 		} else {
 			curUrl = mUrl;
 		}
+		boolean isSuccess = false;
 		boolean https = false;
 		HttpEntity multiEn = null;
 		if (null != mFormData) {
@@ -207,13 +212,15 @@ public class ECusHttpPost extends Thread implements HttpTask,
 			mOutStream = new DataOutputStream(mConnection.getOutputStream());
 			multiEn.writeTo(mOutStream);
 			responseCode = mConnection.getResponseCode();
-			Map<String, List<String>> headers = mConnection.getHeaderFields();
+			responseMessage = mConnection.getResponseMessage();
+			headers = mConnection.getHeaderFields();
 			mXmlHttpMgr.printHeader(responseCode, mXmlHttpID, curUrl, false,
 					headers);
 			switch (responseCode) {
 			case HttpStatus.SC_OK:
 				byte[] bResult = toByteArray(mConnection);
 				result = new String(bResult, HTTP.UTF_8);
+				isSuccess = true;
 				break;
 			case HttpStatus.SC_MOVED_PERMANENTLY:
 			case HttpStatus.SC_MOVED_TEMPORARILY:
@@ -227,24 +234,27 @@ public class ECusHttpPost extends Thread implements HttpTask,
 					return;
 				}
 				break;
-			case HttpStatus.SC_UNAUTHORIZED:
-				result = "error:unauthorized";
-				break;
 			default:
-				result = "error:" + responseCode;
+				byte[] bError = toErrorByteArray(mConnection);
+				responseError = new String(bError, HTTP.UTF_8);
 				break;
 			}
 			handleCookie(curUrl, headers);
 		} catch (Exception e) {
-			e.printStackTrace();
+			isSuccess = false;
 			if ((e instanceof IOException) && https) {
-				result = "error:unauthorized";
+				result = "unauthorized";
+			} else if (e instanceof SocketTimeoutException) {
+				result = "timeout"; // ÍøÂçÁ¬½Ó³¬Ê±¡£
 			} else {
-				result = "error:net work error or timeout!";
+				result = "net work error";
 			}
 		} finally {
-			if (null != mConnection) {
-				mConnection.disconnect();
+			try {
+				if (null != mConnection) {
+					mConnection.disconnect();
+				}
+			} catch (Exception e) {
 			}
 		}
 		mXmlHttpMgr.onFinish(mXmlHttpID);
@@ -252,11 +262,28 @@ public class ECusHttpPost extends Thread implements HttpTask,
 			return;
 		}
 		mXmlHttpMgr.printResult(mXmlHttpID, curUrl, result);
-		if (result.startsWith("error")) {
-			mXmlHttpMgr.errorCallBack(mXmlHttpID, result, responseCode);
-			return;
+		if (isSuccess) {
+			JSONObject jsonObject = new JSONObject();
+			try {
+				if (headers != null && !headers.isEmpty()) {
+					JSONObject jsonHeaders = XmlHttpUtil
+							.getJSONHeaders(headers);
+					jsonObject.put(EUExXmlHttpMgr.PARAMS_JSON_KEY_HEADERS,
+							jsonHeaders);
+				}
+				jsonObject.put(EUExXmlHttpMgr.PARAMS_JSON_KEY_STATUSCODE,
+						responseCode);
+				jsonObject.put(EUExXmlHttpMgr.PARAMS_JSON_KEY_STATUSMESSAGE,
+						responseMessage);
+				jsonObject.put(EUExXmlHttpMgr.PARAMS_JSON_KEY_RESPONSEERROR,
+						responseError);
+			} catch (Exception e) {
+			}
+			mXmlHttpMgr.callBack(mXmlHttpID, result, responseCode,
+					jsonObject.toString());
+		} else {
+			mXmlHttpMgr.errorCallBack(mXmlHttpID, result, responseCode, "");
 		}
-		mXmlHttpMgr.callBack(mXmlHttpID, result, responseCode);
 		return;
 	}
 
@@ -357,6 +384,12 @@ public class ECusHttpPost extends Thread implements HttpTask,
 				e.printStackTrace();
 			}
 		}
+		if (null != mErrorInStream) {
+			try {
+				mErrorInStream.close();
+			} catch (Exception e) {
+			}
+		}
 		try {
 			interrupt();
 		} catch (Exception e) {
@@ -392,57 +425,27 @@ public class ECusHttpPost extends Thread implements HttpTask,
 				gzip = true;
 			}
 		}
-		ByteArrayBuffer buffer = new ByteArrayBuffer(1024 * 8);
-		// \&:38, \n:10, \r:13, \':39, \":34, \\:92
-		try {
-			if (gzip) {
-				int lenth = 0;
-				while (lenth != -1) {
-					byte[] buf = new byte[2048];
-					try {
-						lenth = mInStream.read(buf, 0, buf.length);
-						if (lenth != -1) {
-							buffer.append(buf, 0, lenth);
-						}
-					} catch (EOFException e) {
-						int tl = buf.length;
-						int surpl;
-						for (int k = 0; k < tl; ++k) {
-							surpl = buf[k];
-							if (surpl != 0) {
-								buffer.append(surpl);
-							}
-						}
-						lenth = -1;
-					}
-				}
-				int bl = buffer.length();
-				ByteArrayBuffer temBuffer = new ByteArrayBuffer(
-						(int) (bl * 1.4));
-				for (int j = 0; j < bl; ++j) {
-					int cc = buffer.byteAt(j);
-					if (cc == 34 || cc == 39 || cc == 92 || cc == 10
-							|| cc == 13 || cc == 38) {
-						temBuffer.append('\\');
-					}
-					temBuffer.append(cc);
-				}
-				buffer = temBuffer;
-			} else {
-				int c;
-				while ((c = mInStream.read()) != -1) {
-					if (c == 34 || c == 39 || c == 92 || c == 10 || c == 13
-							|| c == 38) {
-						buffer.append('\\');
-					}
-					buffer.append(c);
-				}
-			}
-		} catch (Exception e) {
-			mInStream.close();
-		} finally {
-			mInStream.close();
+		ByteArrayBuffer buffer = XmlHttpUtil.getBuffer(gzip, mInStream);
+		return buffer.toByteArray();
+	}
+	
+	private byte[] toErrorByteArray(HttpURLConnection conn) throws Exception {
+		if (null == conn) {
+			return new byte[] {};
 		}
+		mErrorInStream = conn.getErrorStream();
+		if (mErrorInStream == null) {
+			return new byte[] {};
+		}
+		String contentEncoding = conn.getContentEncoding();
+		boolean gzip = false;
+		if (null != contentEncoding) {
+			if ("gzip".equalsIgnoreCase(contentEncoding)) {
+				mErrorInStream = new GZIPInputStream(mErrorInStream, 2048);
+				gzip = true;
+			}
+		}
+		ByteArrayBuffer buffer = XmlHttpUtil.getBuffer(gzip, mErrorInStream);
 		return buffer.toByteArray();
 	}
 
