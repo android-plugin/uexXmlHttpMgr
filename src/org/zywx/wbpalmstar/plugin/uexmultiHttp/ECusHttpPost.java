@@ -220,7 +220,6 @@ public class ECusHttpPost extends Thread implements HttpTask,
 			case HttpStatus.SC_OK:
 				byte[] bResult = toByteArray(mConnection);
 				result = new String(bResult, HTTP.UTF_8);
-				isSuccess = true;
 				break;
 			case HttpStatus.SC_MOVED_PERMANENTLY:
 			case HttpStatus.SC_MOVED_TEMPORARILY:
@@ -240,14 +239,15 @@ public class ECusHttpPost extends Thread implements HttpTask,
 				break;
 			}
 			handleCookie(curUrl, headers);
+			isSuccess = true;
 		} catch (Exception e) {
 			isSuccess = false;
 			if ((e instanceof IOException) && https) {
-				result = "unauthorized";
+				result = EUExXmlHttpMgr.CONNECT_FAIL_AUTHENTICATION;
 			} else if (e instanceof SocketTimeoutException) {
-				result = "timeout"; // 网络连接超时。
+				result = EUExXmlHttpMgr.CONNECT_FAIL_TIMEDOUT; // 网络连接超时。
 			} else {
-				result = "net work error";
+				result = EUExXmlHttpMgr.CONNECT_FAIL_CONNECTION_FAILURE;
 			}
 		} finally {
 			try {

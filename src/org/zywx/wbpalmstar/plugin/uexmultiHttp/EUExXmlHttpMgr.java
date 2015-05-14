@@ -26,6 +26,9 @@ import android.net.Uri;
 
 public class EUExXmlHttpMgr extends EUExBase {
 
+	public static final String CONNECT_FAIL_AUTHENTICATION = "Authentication needed";
+	public static final String CONNECT_FAIL_TIMEDOUT = "The request timed out";
+	public static final String CONNECT_FAIL_CONNECTION_FAILURE = "A connection failure occurred";
 	public static final String PARAMS_JSON_KEY_HEADERS = "responseHeaders";
 	public static final String PARAMS_JSON_KEY_STATUSCODE = "responseStatusCode";
 	public static final String PARAMS_JSON_KEY_STATUSMESSAGE = "responseStatusMessage";
