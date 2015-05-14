@@ -229,7 +229,7 @@ public class EHttpPost extends Thread implements HttpTask, HttpClientListener {
 		} catch (Exception e) {
 			isSuccess = false;
 			if (e instanceof SocketTimeoutException) {
-				result = EUExXmlHttpMgr.CONNECT_FAIL_TIMEDOUT; // 网络连接超时。
+				result = EUExXmlHttpMgr.CONNECT_FAIL_TIMEDOUT;
 			} else {
 				result = EUExXmlHttpMgr.CONNECT_FAIL_CONNECTION_FAILURE;
 			}

@@ -209,7 +209,7 @@ public class EHttpGet extends Thread implements HttpTask {
 			if ((e instanceof IOException) && https) {
 				result = EUExXmlHttpMgr.CONNECT_FAIL_AUTHENTICATION;
 			} else if (e instanceof SocketTimeoutException) {
-				result = EUExXmlHttpMgr.CONNECT_FAIL_TIMEDOUT; // 网络连接超时。
+				result = EUExXmlHttpMgr.CONNECT_FAIL_TIMEDOUT;
 			} else {
 				result = EUExXmlHttpMgr.CONNECT_FAIL_CONNECTION_FAILURE;
 			}
