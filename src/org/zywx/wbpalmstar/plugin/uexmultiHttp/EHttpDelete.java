@@ -135,18 +135,18 @@ public class EHttpDelete extends Thread implements HttpTask {
 				byte[] arrayOfByte = XmlHttpUtil.toByteArray(httpEntity);
 				result = new String(arrayOfByte, charSet);
 				httpEntity.consumeContent();
-				isSuccess = true;
 				break;
 			default:
 				break;
 			}
 			handleCookie(curUrl, response);
+			isSuccess = true;
 		} catch (Exception e) {
 			isSuccess = false;
 			if (e instanceof SocketTimeoutException) {
-				result = "timeout"; // 网络连接超时。
+				result = EUExXmlHttpMgr.CONNECT_FAIL_TIMEDOUT;
 			} else {
-				result = "net work error";
+				result = EUExXmlHttpMgr.CONNECT_FAIL_CONNECTION_FAILURE;
 			}
 		} finally {
 			mHttpDelete.abort();
