@@ -1,6 +1,7 @@
 package org.zywx.wbpalmstar.plugin.uexmultiHttp;
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.KeyStore;
@@ -63,14 +64,7 @@ public class Http {
 	        String keyName = cPath.substring(index);
 	        KeyStore ksP12 = KEY_STORE.get(keyName);
 	        if(null == ksP12){
-		        String assertFile = "widget/wgtRes/";
-		        String sdcardFile = "/storage/emulated/0/";
-		        if(cPath.contains(assertFile)){
-		        	AssetManager asset = ctx.getAssets();
-		        	inStream = asset.open(cPath);
-		        }else if(cPath.contains(sdcardFile)){
-		        	inStream = new FileInputStream(cPath);
-		        }
+				inStream = getInputStream(cPath, ctx);
 				ksP12 = KeyStore.getInstance(keyType);          
 				ksP12.load(inStream, cPassWord.toCharArray());
 				KEY_STORE.put(keyName, ksP12);
@@ -104,6 +98,31 @@ public class Http {
 			}
 		}
 	}
+
+	private static InputStream getInputStream(String cPath, Context ctx)
+			throws IOException, FileNotFoundException {
+		InputStream inStream;
+		String assertFile = "file:///android_asset/";
+		String sdcardFile = "/sdcard/";
+		String wgtFile = "widget/";
+		String file = "file://";
+		if (cPath.contains(assertFile)) {
+			cPath = cPath.substring(assertFile.length());
+			AssetManager asset = ctx.getAssets();
+			inStream = asset.open(cPath);
+		} else if (cPath.contains(sdcardFile)) {
+			if (cPath.contains(file)) {
+				cPath = cPath.substring("file://".length());
+			}
+			inStream = new FileInputStream(cPath);
+		} else if (cPath.startsWith(wgtFile)) {
+			AssetManager asset = ctx.getAssets();
+			inStream = asset.open(cPath);
+		} else {
+			inStream = new FileInputStream(cPath);
+		}
+		return inStream;
+	}
 	
 	public static HttpClient getHttpClient(int mTimeOut) {
 		BasicHttpParams bparams = new BasicHttpParams();
@@ -122,16 +141,7 @@ public class Http {
 	        String keyName = cPath.substring(index);
 	        KeyStore ksP12 = KEY_STORE.get(keyName);
 	        if(null == ksP12){
-		        String assertFile = "file:///android_asset/";
-		        String sdcardFile = "file:///sdcard";
-		        if(cPath.startsWith(assertFile)){
-		        	cPath = cPath.substring(assertFile.length());
-		        	AssetManager asset = ctx.getAssets();
-		        	inStream = asset.open(cPath);
-		        }else if(cPath.startsWith(sdcardFile)){
-		        	cPath = cPath.substring("file://".length());
-		        	inStream = new FileInputStream(cPath);
-		        }
+				inStream = getInputStream(cPath, ctx);
 				ksP12 = KeyStore.getInstance("pkcs12");          
 				ksP12.load(inStream, cPassWord.toCharArray());
 				KEY_STORE.put(keyName, ksP12);
