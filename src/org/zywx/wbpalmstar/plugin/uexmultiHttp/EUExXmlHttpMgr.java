@@ -199,6 +199,7 @@ public class EUExXmlHttpMgr extends EUExBase {
 			WWidgetData wd = mBrwView.getCurrentWidget();
 			if ("default".equalsIgnoreCase(cPath)) {
 				cPath = "file:///android_asset/widget/wgtRes/clientCertificate.p12";
+				wd = mBrwView.getRootWidget();
 				String appId = wd.m_appId;
 				String psw = EUExUtil.getCertificatePsw(mContext, appId);
 				cPassWord = psw;
