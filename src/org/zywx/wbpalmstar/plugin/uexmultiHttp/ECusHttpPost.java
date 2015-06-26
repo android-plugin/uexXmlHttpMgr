@@ -25,7 +25,6 @@ import org.apache.http.protocol.HTTP;
 import org.apache.http.util.ByteArrayBuffer;
 import org.json.JSONObject;
 import org.zywx.wbpalmstar.base.BUtility;
-import org.zywx.wbpalmstar.platform.certificates.Http;
 import org.zywx.wbpalmstar.widgetone.dataservice.WWidgetData;
 
 import android.os.Process;
@@ -181,7 +180,7 @@ public class ECusHttpPost extends Thread implements HttpTask,
 					ssFact = Http.getSSLSocketFactoryWithCert(mCertPassword,
 							mCertPath, mXmlHttpMgr.getContext());
 				} else {
-					ssFact = new HNetSSLSocketFactory(null, null);
+					ssFact = Http.getSSLSocketFactory();
 				}
 				((HttpsURLConnection) mConnection).setSSLSocketFactory(ssFact);
 				((HttpsURLConnection) mConnection)
