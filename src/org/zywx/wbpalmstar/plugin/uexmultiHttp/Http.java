@@ -152,4 +152,16 @@ public class Http {
 		}
 		return ssSocketFactory;
 	}
+	
+	public static HNetSSLSocketFactory getSSLSocketFactory() {
+		HNetSSLSocketFactory ssSocketFactory = null;
+		try {
+			KeyStore keyStore = KeyStore.getInstance(keyType);
+			keyStore.load(null, null);
+	        ssSocketFactory = new HNetSSLSocketFactory(keyStore, null);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return ssSocketFactory;
+	}
 }
