@@ -13,5 +13,6 @@
         <method name="setBody" />
         <method name="setAppVerify" />
         <method name="getCookie" />
+        <method name="clearCookie" />
     </plugin>
 </uexplugins>

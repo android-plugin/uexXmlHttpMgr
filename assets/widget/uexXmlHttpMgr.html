@@ -49,11 +49,10 @@
 
 	window.uexOnload = function(){
 		uexXmlHttpMgr.onData = httpSuccess;
-		uexFileMgr.cbExplorer=function(opCode,dataType,data){
-			file = data;
-			document.getElementById('sss').innerHTML = data;
-		}
 		
+		uexXmlHttpMgr.cbGetCookie = function (opCode,dataType,data){
+			alert(data);
+		}
 		uexXmlHttpMgr.onPostProgress = function (inOpCode,inProgress){
 			if(inOpCode == 2){
 				document.getElementById('adre2').innerHTML =  "opCode:" + inOpCode + "; 上传进度:" + inProgress;
@@ -63,6 +62,10 @@
 			alert("errorCode:" + errorCode + "\nerrorInfo:" + errorInfo);
 		}
 		
+		uexFileMgr.cbExplorer=function(opCode,dataType,data){
+			file = data;
+			document.getElementById('sss').innerHTML = data;
+		}
 
 	}
 		</script>
@@ -87,6 +90,16 @@
 			文件：<input  class="btn" type="button" value="启动文件浏览器" onclick="uexFileMgr.explorer('');">
 			<span id="sss"></span>
 			<input class="btn" type="button" value="发请求" onclick=xmlHttpPost()>
+		
+			<span>
+            3.获取cookie
+          </span>
+          <input class="btn" type="button" value="获取cookie" onclick="uexXmlHttpMgr.getCookie('http://www.baidu.com')">
+             <span>
+             4.清除cookie
+             </span>
+             <input class="btn" type="button" value="清除cookie" onclick="uexXmlHttpMgr.clearCookie('http://www.baidu.com')">
+             <input class="btn" type="button" value="清除所有cookie" onclick="uexXmlHttpMgr.clearCookie()">
 		
 			<span>请求结果：</span>
 			<div class="tcxx" id="adre1"></div>

@@ -1,7 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <uexplugins>
-	<plugin uexName="uexXmlHttpMgr" version="3.0.18" build = "18">
-		<info>18:修复Https无证书时OutOfMemoryError问题</info>
+	<plugin uexName="uexXmlHttpMgr" version="3.0.19" build = "19">
+		<info>19:增加clearCookie接口，用于删除cookie信息</info>
+		<build>18:修复Https无证书时OutOfMemoryError问题</build>
 		<build>17:修复子应用默认证书密码解密错误的问题</build>
 		<build>16:修复证书路径解析错误问题</build>
 		<build>15:onData回调函数参数修改</build>
