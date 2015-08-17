@@ -23,6 +23,7 @@ import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.webkit.CookieManager;
 
 public class EUExXmlHttpMgr extends EUExBase {
 
@@ -293,6 +294,17 @@ public class EUExXmlHttpMgr extends EUExBase {
 		getCookieCallBack(this.getCookie(parm[0]));
 	}
 
+	public void clearCookie(String parm[]) {
+		try {
+			if (parm.length == 0) {
+				CookieManager.getInstance().removeAllCookie();
+			} else if (parm.length == 1) {
+				// TODO 使用默认CookieManager暂未找到方法清除指定url的cookie
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
 	public void getCookieCallBack(String cookie) {
 		String jsonS = "{" + "\"" + "cookie" + "\"" + ":" + "\"" + cookie
