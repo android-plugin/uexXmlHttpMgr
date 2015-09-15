@@ -418,5 +418,6 @@ public class EHttpGet extends Thread implements HttpTask {
 				XmlHttpUtil.KEY_APPVERIFY,
 				XmlHttpUtil.getAppVerifyValue(curWData,
 						System.currentTimeMillis()));
+		mHttpHead.put(XmlHttpUtil.XMAS_APPID,curWData.m_appId);
 	}
 }

@@ -26,6 +26,7 @@ import android.os.Environment;
 public class XmlHttpUtil {
 
 	public final static String KEY_APPVERIFY = "appverify";
+	public final static String XMAS_APPID = "x-mas-app-id";
 	static DateFormat formatter = new SimpleDateFormat("yyyyMMdd");
 	static DateFormat formatter1 = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
 
