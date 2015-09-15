@@ -209,7 +209,7 @@ public class EHttpDelete extends Thread implements HttpTask {
 			Set<Entry<String, String>> entrys = mHttpHead.entrySet();
 			for (Map.Entry<String, String> entry : entrys) {
 
-				mHttpDelete.addHeader(entry.getKey(), entry.getValue());
+				mHttpDelete.setHeader(entry.getKey(), entry.getValue());
 			}
 		}
 	}
@@ -265,6 +265,7 @@ public class EHttpDelete extends Thread implements HttpTask {
 				XmlHttpUtil.KEY_APPVERIFY,
 				XmlHttpUtil.getAppVerifyValue(curWData,
 						System.currentTimeMillis()));
+		mHttpHead.put(XmlHttpUtil.XMAS_APPID, curWData.m_appId);
 	}
 
 }

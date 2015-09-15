@@ -485,5 +485,6 @@ public class ECusHttpPost extends Thread implements HttpTask,
 				XmlHttpUtil.KEY_APPVERIFY,
 				XmlHttpUtil.getAppVerifyValue(curWData,
 						System.currentTimeMillis()));
+		mConnection.setRequestProperty(XmlHttpUtil.XMAS_APPID, curWData.m_appId);
 	}
 }

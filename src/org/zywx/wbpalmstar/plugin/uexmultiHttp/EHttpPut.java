@@ -181,11 +181,12 @@ public class EHttpPut extends Thread implements HttpTask, HttpClientListener {
 		if (null != cookie) {
 			mHttpPut.addHeader(SM.COOKIE, cookie);
 		}
-		if(null != curWData) {
-			mHttpPut.addHeader(XmlHttpUtil.KEY_APPVERIFY, XmlHttpUtil.getAppVerifyValue(curWData, System.currentTimeMillis()));
-			curWData = null;
-		}
 		addHeaders();
+		if(null != curWData) {
+			mHttpPut.setHeader(XmlHttpUtil.KEY_APPVERIFY, XmlHttpUtil.getAppVerifyValue(curWData, System.currentTimeMillis()));
+			mHttpPut.setHeader(XmlHttpUtil.XMAS_APPID,curWData.m_appId);
+//			curWData = null;
+		}
 		try {
 			mXmlHttpMgr.printHeader(-1, mXmlHttpID, curUrl, true, mHttpPut.getAllHeaders());
 			HttpResponse response = mHttpClient.execute(mHttpPut);
