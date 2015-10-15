@@ -184,11 +184,12 @@ public class EHttpPost extends Thread implements HttpTask, HttpClientListener {
 		if (null != cookie) {
 			mHttpPost.addHeader(SM.COOKIE, cookie);
 		}
-		if(null != curWData) {
-			mHttpPost.addHeader(XmlHttpUtil.KEY_APPVERIFY, XmlHttpUtil.getAppVerifyValue(curWData, System.currentTimeMillis()));
-			curWData = null;
-		}
 		addHeaders();
+		if(null != curWData) {
+			mHttpPost.setHeader(XmlHttpUtil.KEY_APPVERIFY, XmlHttpUtil.getAppVerifyValue(curWData, System.currentTimeMillis()));
+			mHttpPost.setHeader(XmlHttpUtil.XMAS_APPID,curWData.m_appId);
+//			curWData = null;
+		}
 		try {
 			mXmlHttpMgr.printHeader(-1, mXmlHttpID, curUrl, true,
 					mHttpPost.getAllHeaders());

@@ -23,7 +23,8 @@ import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
-
+import android.webkit.CookieManager;
+import android.util.Log;
 public class EUExXmlHttpMgr extends EUExBase {
 
 	public static final String CONNECT_FAIL_AUTHENTICATION = "Authentication needed";
@@ -47,7 +48,7 @@ public class EUExXmlHttpMgr extends EUExBase {
 
 	public EUExXmlHttpMgr(Context context, EBrowserView inParent) {
 		super(context, inParent);
-		mCurWData = inParent.getCurrentWidget();
+		mCurWData = getWidgetData(inParent);
 	}
 
 	public void open(String[] parm) {
@@ -293,6 +294,17 @@ public class EUExXmlHttpMgr extends EUExBase {
 		getCookieCallBack(this.getCookie(parm[0]));
 	}
 
+	public void clearCookie(String parm[]) {
+		try {
+			if (parm.length == 0) {
+				CookieManager.getInstance().removeAllCookie();
+			} else if (parm.length == 1) {
+				// TODO 使用默认CookieManager暂未找到方法清除指定url的cookie
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
 	public void getCookieCallBack(String cookie) {
 		String jsonS = "{" + "\"" + "cookie" + "\"" + ":" + "\"" + cookie
@@ -502,5 +514,19 @@ public class EUExXmlHttpMgr extends EUExBase {
 			}
 		}
 		return NETWORK_CLASS_UNKNOWN;
+	}
+	/**
+	 * plugin里面的子应用的appId和appkey都按照主应用为准
+	 */
+	private WWidgetData getWidgetData(EBrowserView view){
+		WWidgetData widgetData = view.getCurrentWidget();
+		String indexUrl=widgetData.m_indexUrl;
+		Log.i("uexXmlHttpMgr", "m_indexUrl:"+indexUrl);
+		if(widgetData.m_wgtType!=0){
+			if(indexUrl.contains("widget/plugin")){
+				return view.getRootWidget();
+			}
+		}
+		return widgetData;
 	}
 }

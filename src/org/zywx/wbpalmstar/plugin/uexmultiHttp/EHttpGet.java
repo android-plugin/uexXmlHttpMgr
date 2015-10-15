@@ -21,7 +21,6 @@ import org.apache.http.cookie.SM;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.ByteArrayBuffer;
 import org.json.JSONObject;
-import org.zywx.wbpalmstar.platform.certificates.Http;
 import org.zywx.wbpalmstar.widgetone.dataservice.WWidgetData;
 
 import android.os.Build;
@@ -151,7 +150,7 @@ public class EHttpGet extends Thread implements HttpTask {
 					ssFact = Http.getSSLSocketFactoryWithCert(mCertPassword,
 							mCertPath, mXmlHttpMgr.getContext());
 				} else {
-					ssFact = new HNetSSLSocketFactory(null, null);
+					ssFact = Http.getSSLSocketFactory();
 				}
 				((HttpsURLConnection) mConnection).setSSLSocketFactory(ssFact);
 				((HttpsURLConnection) mConnection)
@@ -419,5 +418,6 @@ public class EHttpGet extends Thread implements HttpTask {
 				XmlHttpUtil.KEY_APPVERIFY,
 				XmlHttpUtil.getAppVerifyValue(curWData,
 						System.currentTimeMillis()));
+		mHttpHead.put(XmlHttpUtil.XMAS_APPID,curWData.m_appId);
 	}
 }
