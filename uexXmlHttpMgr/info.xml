@@ -1,7 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <uexplugins>
-	<plugin uexName="uexXmlHttpMgr" version="3.0.20" build = "20">
-		<info>20:增加新的 header以及plugin里面的子应用的appId和appkey都按照主应用为准</info>
+	<plugin uexName="uexXmlHttpMgr" version="3.0.21" build = "21">
+		<info>21:修改请求对象唯一标识符按String类型处理。</info>
+		<build>20:增加新的 header以及plugin里面的子应用的appId和appkey都按照主应用为准</build>
 		<build>19:增加clearCookie接口，用于删除cookie信息</build>
 		<build>18:修复Https无证书时OutOfMemoryError问题</build>
 		<build>17:修复子应用默认证书密码解密错误的问题</build>

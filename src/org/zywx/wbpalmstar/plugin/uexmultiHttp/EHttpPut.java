@@ -41,7 +41,7 @@ public class EHttpPut extends Thread implements HttpTask, HttpClientListener {
 	private boolean mHasLocalCert;
 	private String mCertPassword;
 	private String mCertPath;
-	private int mXmlHttpID;
+	private String mXmlHttpID;
 	private Hashtable<String, String> mHttpHead;
 	private ArrayList<HPair> mMultiData;
 	private WWidgetData curWData = null;
@@ -61,7 +61,7 @@ public class EHttpPut extends Thread implements HttpTask, HttpClientListener {
 		mUrl = inUrl;
 		mTimeOut = timeout;
 		mXmlHttpMgr = euExXmlHttpMgr;
-		mXmlHttpID = Integer.parseInt(inXmlHttpID);
+		mXmlHttpID = inXmlHttpID;
 		initNecessaryHeader();
 	}
 
@@ -224,6 +224,7 @@ public class EHttpPut extends Thread implements HttpTask, HttpClientListener {
 			handleCookie(curUrl, response);
 			isSuccess = true;
 		} catch (Exception e) {
+            e.printStackTrace();
 			isSuccess = false;
 			if (e instanceof SocketTimeoutException) {
 				result = EUExXmlHttpMgr.CONNECT_FAIL_TIMEDOUT;
