@@ -24,7 +24,7 @@ import android.os.Process;
 
 public class EHttpDelete extends Thread implements HttpTask {
 	
-	private int mXmlHttpID;
+	private String mXmlHttpID;
 	private int mTimeOut;
 	private EUExXmlHttpMgr mXmlHttpMgr;
 	private String mUrl;
@@ -44,7 +44,7 @@ public class EHttpDelete extends Thread implements HttpTask {
 
 	public EHttpDelete(String inXmlHttpID, String inUrl, int timeout,
 			EUExXmlHttpMgr euExXmlHttpMgr) {
-		mXmlHttpID = Integer.parseInt(inXmlHttpID);
+		mXmlHttpID = inXmlHttpID;
 		mTimeOut = timeout;
 		mXmlHttpMgr = euExXmlHttpMgr;
 		mUrl = inUrl;
@@ -142,6 +142,7 @@ public class EHttpDelete extends Thread implements HttpTask {
 			handleCookie(curUrl, response);
 			isSuccess = true;
 		} catch (Exception e) {
+            e.printStackTrace();
 			isSuccess = false;
 			if (e instanceof SocketTimeoutException) {
 				result = EUExXmlHttpMgr.CONNECT_FAIL_TIMEDOUT;

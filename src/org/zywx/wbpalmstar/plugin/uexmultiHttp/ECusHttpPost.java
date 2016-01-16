@@ -44,7 +44,7 @@ public class ECusHttpPost extends Thread implements HttpTask,
 	private boolean mRunning;
 	private boolean mCancelled;
 	private String mUrl;
-	private int mXmlHttpID;
+	private String mXmlHttpID;
 	private EUExXmlHttpMgr mXmlHttpMgr;
 	private URL mClient;
 	private HttpURLConnection mConnection;
@@ -65,7 +65,7 @@ public class ECusHttpPost extends Thread implements HttpTask,
 		mUrl = url;
 		mTimeOut = timeout;
 		mXmlHttpMgr = xmlHttpMgr;
-		mXmlHttpID = Integer.parseInt(inXmlHttpID);
+		mXmlHttpID = inXmlHttpID;
 		mShemeId = url.startsWith("https") ? F_SHEM_ID_HTTPS : F_SHEM_ID_HTTP;
 		setName("SoTowerMobile-HttpPost");
 	}
@@ -240,6 +240,7 @@ public class ECusHttpPost extends Thread implements HttpTask,
 			handleCookie(curUrl, headers);
 			isSuccess = true;
 		} catch (Exception e) {
+		    e.printStackTrace();
 			isSuccess = false;
 			if ((e instanceof IOException) && https) {
 				result = EUExXmlHttpMgr.CONNECT_FAIL_AUTHENTICATION;

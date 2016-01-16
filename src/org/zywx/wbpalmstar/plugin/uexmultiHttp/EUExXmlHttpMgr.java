@@ -313,15 +313,14 @@ public class EUExXmlHttpMgr extends EUExBase {
 	}
 
 
-	public void onFinish(int opCode) {
-		String code = String.valueOf(opCode);
-		HttpTask xmlHttp = mXmlHttpMap.get(code);
+	public void onFinish(String opCode) {
+		HttpTask xmlHttp = mXmlHttpMap.get(opCode);
 		if (null != xmlHttp && null != mXmlHttpMap) {
-			mXmlHttpMap.remove(code);
+			mXmlHttpMap.remove(opCode);
 		}
 	}
 
-	public void printHeader(int code, int opCode, String url, boolean out,
+	public void printHeader(int code, String opCode, String url, boolean out,
 			Header[] header) {
 		if (mPrintLog && null != header) {
 			String str = code + " , " + opCode + " , "
@@ -338,14 +337,14 @@ public class EUExXmlHttpMgr extends EUExBase {
 		}
 	}
 
-	public void printResult(int opCode, String url, String result) {
+	public void printResult(String opCode, String url, String result) {
 		if (mPrintLog && null != result) {
 			String str = opCode + " , " + url + " , " + result;
 			XmlHttpUtil.printInfo2File(str);
 		}
 	}
 
-	public void printHeader(int code, int opCode, String url, boolean out,
+	public void printHeader(int code, String opCode, String url, boolean out,
 			Map<String, List<String>> headers) {
 		if (mPrintLog && null != headers) {
 			String str = code + " , " + opCode + " , "
@@ -379,19 +378,19 @@ public class EUExXmlHttpMgr extends EUExBase {
 		return mBrwView.getWidgetType();
 	}
 
-	public void callBack(int inOpCode, String inResult, int responseCode, String response) {
+	public void callBack(String inOpCode, String inResult, int responseCode, String response) {
 		String js = SCRIPT_HEADER + "if(" + onFunction + "){" + onFunction
 				+ "(" + inOpCode + "," + 1 + ",'" + inResult +"'," + responseCode + ",'" + response + "');}";
 		onCallback(js);
 	}
 
-	public void errorCallBack(int inOpCode, String inResult, int responseCode, String response) {
+	public void errorCallBack(String inOpCode, String inResult, int responseCode, String response) {
 		String js = SCRIPT_HEADER + "if(" + onFunction + "){" + onFunction
 				+ "(" + inOpCode + "," + (-1) + ",'" + inResult + "'," + responseCode + ",'" + response +"');}";
 		onCallback(js);
 	}
 
-	public void progressCallBack(int inOpCode, int progress) {
+	public void progressCallBack(String inOpCode, int progress) {
 		String js = SCRIPT_HEADER + "if(" + post_onFunction + "){"
 				+ post_onFunction + "(" + inOpCode + "," + progress + ")}";
 		onCallback(js);

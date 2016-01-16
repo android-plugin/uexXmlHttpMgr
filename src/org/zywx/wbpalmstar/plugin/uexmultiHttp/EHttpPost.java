@@ -38,7 +38,7 @@ public class EHttpPost extends Thread implements HttpTask, HttpClientListener {
 	private boolean mRunning;
 	private boolean mCancelled;
 	private String mUrl;
-	private int mXmlHttpID;
+	private String mXmlHttpID;
 	private EUExXmlHttpMgr mXmlHttpMgr;
 	private HttpClient mHttpClient;
 	private HttpPost mHttpPost;
@@ -67,7 +67,7 @@ public class EHttpPost extends Thread implements HttpTask, HttpClientListener {
 		mUrl = url;
 		mTimeOut = timeout;
 		mXmlHttpMgr = xmlHttpMgr;
-		mXmlHttpID = Integer.parseInt(inXmlHttpID);
+		mXmlHttpID = inXmlHttpID;
 		initNecessaryHeader();
 	}
 
@@ -228,6 +228,7 @@ public class EHttpPost extends Thread implements HttpTask, HttpClientListener {
 			handleCookie(curUrl, response);
 			isSuccess = true;
 		} catch (Exception e) {
+		    e.printStackTrace();
 			isSuccess = false;
 			if (e instanceof SocketTimeoutException) {
 				result = EUExXmlHttpMgr.CONNECT_FAIL_TIMEDOUT;

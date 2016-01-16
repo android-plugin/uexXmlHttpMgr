@@ -49,7 +49,7 @@ public class EHttpGet extends Thread implements HttpTask {
 	private int mTimeOut;
 	private boolean mRunning;
 	private boolean mCancelled;
-	private int mXmlHttpID;
+	private String mXmlHttpID;
 	private String mCertPassword;
 	private String mCertPath;
 	private boolean mHasLocalCert;
@@ -66,7 +66,7 @@ public class EHttpGet extends Thread implements HttpTask {
 	public EHttpGet(String inXmlHttpID, String url, int timeout,
 			EUExXmlHttpMgr meUExXmlHttpMgr) {
 		setName("SoTowerMobile-HttpGet");
-		mXmlHttpID = Integer.parseInt(inXmlHttpID);
+		mXmlHttpID = inXmlHttpID;
 		mTimeOut = timeout;
 		mXmlHttpMgr = meUExXmlHttpMgr;
 		mUrl = url;
@@ -204,6 +204,7 @@ public class EHttpGet extends Thread implements HttpTask {
 			handleCookie(curUrl, headers);
 			isSuccess = true;
 		} catch (Exception e) {
+            e.printStackTrace();
 			isSuccess=false;
 			if ((e instanceof IOException) && https) {
 				result = EUExXmlHttpMgr.CONNECT_FAIL_AUTHENTICATION;
