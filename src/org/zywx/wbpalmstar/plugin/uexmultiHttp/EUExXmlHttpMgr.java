@@ -1,13 +1,12 @@
 package org.zywx.wbpalmstar.plugin.uexmultiHttp;
 
-import java.io.File;
-import java.net.InetSocketAddress;
-import java.net.Proxy;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
+import android.content.Context;
+import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.net.Uri;
+import android.util.Log;
+import android.webkit.CookieManager;
 
 import org.apache.http.Header;
 import org.apache.http.HttpHost;
@@ -18,13 +17,14 @@ import org.zywx.wbpalmstar.engine.universalex.EUExCallback;
 import org.zywx.wbpalmstar.engine.universalex.EUExUtil;
 import org.zywx.wbpalmstar.widgetone.dataservice.WWidgetData;
 
-import android.content.Context;
-import android.database.Cursor;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.net.Uri;
-import android.webkit.CookieManager;
-import android.util.Log;
+import java.io.File;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 public class EUExXmlHttpMgr extends EUExBase {
 
 	public static final String CONNECT_FAIL_AUTHENTICATION = "Authentication needed";
@@ -48,7 +48,9 @@ public class EUExXmlHttpMgr extends EUExBase {
 
 	public EUExXmlHttpMgr(Context context, EBrowserView inParent) {
 		super(context, inParent);
-		mCurWData = getWidgetData(inParent);
+		if (inParent.getBrowserWindow()!=null) {
+			mCurWData = getWidgetData(inParent);
+		}
 	}
 
 	public void open(String[] parm) {
