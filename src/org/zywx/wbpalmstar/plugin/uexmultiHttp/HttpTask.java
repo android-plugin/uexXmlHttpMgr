@@ -1,28 +1,31 @@
 package org.zywx.wbpalmstar.plugin.uexmultiHttp;
 
-import java.io.File;
-
 import org.zywx.wbpalmstar.widgetone.dataservice.WWidgetData;
 
+import java.io.File;
+
 public interface HttpTask {
-	void setData(int inDataType, String inKey, String inValue);
 
-	void send();
+    void setData(int inDataType, String inKey, String inValue);
 
-	void cancel();
+    void send();
 
-	void setCertificate(String cPassWord, String cPath);
+    void cancel();
 
-	void setHeaders(String headJson);
+    void setCertificate(String cPassWord, String cPath);
 
-	void setBody(String body);
+    void setHeaders(String headJson);
 
-	void setInputStream(File file);
+    void setBody(String body);
 
-	/**
-	 * 添加app验证Header（如果需要）
-	 * 
-	 * @param curWData
-	 */
-	void setAppVerifyHeader(WWidgetData curWData);
+    void setInputStream(File file);
+
+    /**
+     * 添加app验证Header（如果需要）
+     *
+     * @param curWData
+     */
+    void setAppVerifyHeader(WWidgetData curWData);
+
+    void setCallbackId(int onDataCallbackId,int onProgressCallbackId);
 }
