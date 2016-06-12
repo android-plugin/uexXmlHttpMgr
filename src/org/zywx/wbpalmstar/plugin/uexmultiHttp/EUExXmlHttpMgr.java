@@ -173,7 +173,7 @@ public class EUExXmlHttpMgr extends EUExBase {
             if (null != inValue) {
                 String wp = mBrwView.getWidgetPath();
                 int wtp = mBrwView.getWidgetType();
-                inValue = BUtility.makeRealPath(inValue, wp, wtp);
+                inValue = BUtility.getRealPathWithCopyRes(mBrwView,inValue);
                 if (inValue.startsWith(BUtility.F_FILE_SCHEMA)) {
                     inValue = inValue
                             .substring(BUtility.F_FILE_SCHEMA.length());

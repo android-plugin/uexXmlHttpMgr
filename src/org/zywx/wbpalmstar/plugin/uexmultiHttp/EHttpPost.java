@@ -353,6 +353,12 @@ public class EHttpPost extends Thread implements HttpTask, HttpClientListener {
         writer.append(LINE_FEED);
         writer.flush();
 
+        flushOutputStream(uploadFile);
+        writer.append(LINE_FEED);
+        writer.flush();
+    }
+
+    private void flushOutputStream(File uploadFile) throws IOException {
         FileInputStream inputStream = new FileInputStream(uploadFile);
         byte[] buffer = new byte[4096];
         int bytesRead = -1;
@@ -363,9 +369,8 @@ public class EHttpPost extends Thread implements HttpTask, HttpClientListener {
         }
         outputStream.flush();
         inputStream.close();
-        writer.append(LINE_FEED);
-        writer.flush();
     }
+
 
     private void createFormEntity() {
         for (HPair pair : mMultiData) {
@@ -373,13 +378,8 @@ public class EHttpPost extends Thread implements HttpTask, HttpClientListener {
         }
     }
 
-    // TODO: 16/6/12
-    private void createInputStemEntity() {
-        try {
-            addFilePart("", mOnlyFile);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    private void createInputStemEntity() throws IOException {
+        flushOutputStream(mOnlyFile);
     }
 
     private void calculateTotalSize(){
