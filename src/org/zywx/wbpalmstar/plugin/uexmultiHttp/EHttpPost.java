@@ -210,7 +210,7 @@ public class EHttpPost extends Thread implements HttpTask, HttpClientListener {
             }
 
             mXmlHttpMgr.printHeader(responseCode, mXmlHttpID, curUrl, false, headers);
-            finish(curUrl);
+            result=finish(curUrl);
             handleCookie(curUrl);
             isSuccess = true;
         } catch (Exception e) {
