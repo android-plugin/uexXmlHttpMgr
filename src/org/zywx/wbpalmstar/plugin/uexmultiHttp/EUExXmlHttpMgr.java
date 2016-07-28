@@ -11,10 +11,12 @@ import android.webkit.CookieManager;
 import org.json.JSONObject;
 import org.zywx.wbpalmstar.base.BDebug;
 import org.zywx.wbpalmstar.base.BUtility;
+import org.zywx.wbpalmstar.engine.DataHelper;
 import org.zywx.wbpalmstar.engine.EBrowserView;
 import org.zywx.wbpalmstar.engine.universalex.EUExBase;
 import org.zywx.wbpalmstar.engine.universalex.EUExCallback;
 import org.zywx.wbpalmstar.engine.universalex.EUExUtil;
+import org.zywx.wbpalmstar.plugin.uexmultiHttp.vo.CreateVO;
 import org.zywx.wbpalmstar.widgetone.dataservice.WWidgetData;
 
 import java.io.File;
@@ -46,6 +48,7 @@ public class EUExXmlHttpMgr extends EUExBase {
     public static final String getCookie_onFunction = "uexXmlHttpMgr.cbGetCookie";
 
     private WWidgetData mCurWData;
+    private static int sCurrentId=0;
 
     public EUExXmlHttpMgr(Context context, EBrowserView inParent) {
         super(context, inParent);
@@ -101,6 +104,27 @@ public class EUExXmlHttpMgr extends EUExBase {
         }
         mXmlHttpMap.put(opCode, xmlHttp);
         return true;
+    }
+
+    public String create(String[] params){
+        CreateVO createVO= DataHelper.gson.fromJson(params[0],CreateVO.class);
+        if (createVO.id==null){
+            createVO.id=generateId();
+        }
+        boolean result=open(new String[]{
+                createVO.id,
+                createVO.method,
+                createVO.url,
+                String.valueOf(createVO.timeOut)
+        });
+        return result?createVO.id:null;
+    }
+
+
+
+    private String generateId(){
+        sCurrentId++;
+        return String.valueOf(sCurrentId);
     }
 
     /**

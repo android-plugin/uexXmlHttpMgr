@@ -14,5 +14,6 @@
         <method name="setAppVerify"/>
         <method name="getCookie"/>
         <method name="clearCookie"/>
+        <method name="create"/>
     </plugin>
 </uexplugins>

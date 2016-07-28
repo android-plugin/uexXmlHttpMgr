@@ -14,6 +14,7 @@
         <method name="setAppVerify"/>
         <method name="getCookie"/>
         <method name="clearCookie"/>
+        <method name="create"/>
     </plugin>
     <plugin
         className="org.zywx.wbpalmstar.plugin.uexfilemgr.EUExFileMgr"
