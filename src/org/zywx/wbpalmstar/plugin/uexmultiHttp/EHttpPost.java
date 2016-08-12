@@ -22,7 +22,6 @@ import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -206,7 +205,7 @@ public class EHttpPost extends Thread implements HttpTask, HttpClientListener {
                     createMultiEntity();
                 }
             } else if (null != mBody) {
-                writer.write(URLEncoder.encode(mBody, "UTF-8"));
+                writer.write(mBody);
             }
 
             mXmlHttpMgr.printHeader(responseCode, mXmlHttpID, curUrl, false, headers);
@@ -266,8 +265,10 @@ public class EHttpPost extends Thread implements HttpTask, HttpClientListener {
 
     private String finish(String curUrl) throws IOException {
         String response = null;
-        writer.append(LINE_FEED).flush();
-        writer.append("--" + boundary + "--").append(LINE_FEED);
+        if (mBody==null) {
+            writer.append(LINE_FEED).flush();
+            writer.append("--" + boundary + "--").append(LINE_FEED);
+        }
         writer.close();
         responseCode = mConnection.getResponseCode();
         switch (responseCode) {
