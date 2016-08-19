@@ -205,13 +205,15 @@ public class EUExXmlHttpMgr extends EUExBase {
                 File file = new File(inValue);
                 if (file.exists()) {
                     xmlHttp.setInputStream(file);
+                    return true;
+                }else {
+                    errorCallback(0, EUExCallback.F_E_UEXXMLHTTP_OPEN,
+                            "file not exists");
                     return false;
                 }
-                errorCallback(0, EUExCallback.F_E_UEXXMLHTTP_OPEN,
-                        "file not exists");
             }
         }
-        return true;
+        return false;
     }
 
     public boolean setCertificate(String[] parm) {
