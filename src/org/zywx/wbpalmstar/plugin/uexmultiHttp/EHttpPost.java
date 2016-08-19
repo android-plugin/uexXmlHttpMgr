@@ -239,8 +239,10 @@ public class EHttpPost extends Thread implements HttpTask, HttpClientListener {
                 if (headers != null && !headers.isEmpty()) {
                     JSONObject jsonHeaders = new JSONObject();
                     for (Map.Entry<String, List<String>> header : headers.entrySet()) {
-                        jsonHeaders.put(header.getKey(),
-                                header.getValue());
+                        if (header.getKey()!=null) {
+                            jsonHeaders.put(header.getKey(),
+                                    header.getValue());
+                        }
                     }
                     jsonObject.put(EUExXmlHttpMgr.PARAMS_JSON_KEY_HEADERS,
                             jsonHeaders);
@@ -252,6 +254,9 @@ public class EHttpPost extends Thread implements HttpTask, HttpClientListener {
                 jsonObject
                         .put(EUExXmlHttpMgr.PARAMS_JSON_KEY_RESPONSEERROR, "");
             } catch (Exception e) {
+                if (BDebug.DEBUG){
+                    e.printStackTrace();
+                }
             }
             mXmlHttpMgr.callBack(mXmlHttpID, result, responseCode,
                     jsonObject,mOnDataCallbackId);
