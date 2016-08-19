@@ -184,7 +184,6 @@ public class EHttpPost extends Thread implements HttpTask, HttpClientListener {
         mConnection.setDoInput(true);
         addHeaders(curUrl);
 
-        headers = mConnection.getRequestProperties();
         try {
 
             //设置总大小
@@ -208,7 +207,6 @@ public class EHttpPost extends Thread implements HttpTask, HttpClientListener {
                 writer.write(mBody);
             }
 
-            mXmlHttpMgr.printHeader(responseCode, mXmlHttpID, curUrl, false, headers);
             result=finish(curUrl);
             handleCookie(curUrl);
             isSuccess = true;
@@ -271,6 +269,8 @@ public class EHttpPost extends Thread implements HttpTask, HttpClientListener {
         }
         writer.close();
         responseCode = mConnection.getResponseCode();
+        headers=mConnection.getHeaderFields();
+        mXmlHttpMgr.printHeader(responseCode, mXmlHttpID, curUrl, false, headers);
         switch (responseCode) {
             case HttpURLConnection.HTTP_OK:
                 InputStream is = mConnection.getInputStream();
