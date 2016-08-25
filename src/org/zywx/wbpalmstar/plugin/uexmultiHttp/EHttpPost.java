@@ -269,7 +269,7 @@ public class EHttpPost extends Thread implements HttpTask, HttpClientListener {
     private String finish(String curUrl) throws IOException {
         String response = null;
         if (mBody==null) {
-            writer.append(LINE_FEED).flush();
+            writer.flush();
             writer.append("--" + boundary + "--").append(LINE_FEED);
         }
         writer.close();
