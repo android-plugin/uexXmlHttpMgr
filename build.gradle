@@ -1,16 +1,39 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:2.1.2'
+
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
+    }
+}
+
+
 apply plugin: 'com.android.application'
+
+repositories {
+    flatDir {
+        dirs 'libs'
+    }
+    maven {
+        url 'https://raw.githubusercontent.com/android-plugin/mvn-repo/master/'
+    }
+}
 
 dependencies {
     compile fileTree(dir: 'libs', include: '*.jar')
+    compile 'org.appcan:engine:+:systemRelease@aar'
+    compile(name: "uexFileMgr-debug", ext: 'aar')
 }
 
 android {
-    compileSdkVersion 21
-    buildToolsVersion "21.1.2"
+    compileSdkVersion 23
+    buildToolsVersion "23.0.2"
     lintOptions {
         abortOnError false
     }
-
     sourceSets {
         main {
             manifest.srcFile 'AndroidManifest.xml'
@@ -20,7 +43,7 @@ android {
             renderscript.srcDirs = ['src']
             res.srcDirs = ['res']
             assets.srcDirs = ['assets']
-            jniLibs.srcDirs=['libs']
+            jniLibs.srcDirs = ['libs']
         }
 
         // Move the tests to tests/java, tests/res, etc...
@@ -35,22 +58,12 @@ android {
         debug.setRoot('build-types/debug')
         release.setRoot('build-types/release')
     }
-}
-task clearJar(type: Delete) {
-    delete 'libs/uexBluetoothBLE.jar'
-}
-
-task makeJar(type:org.gradle.api.tasks.bundling.Jar) {
-    //指定生成的jar名
-    baseName 'uexBluetoothBLE'
-    //从哪里打包class文件
-    from('build/intermediates/classes/debug/')
-    //打包到jar后的目录结构
-    into('')
-    //去掉不需要打包的目录和文件
-    exclude('test/', 'BuildConfig.class', 'R.class')
-    //去掉R$开头的文件
-    exclude{ it.name.startsWith('R$');}
+    defaultConfig {
+        minSdkVersion 14
+        applicationId 'org.zywx.wbpalmstar.widgetone.uexxmlhttpmgr'
+    }
+    productFlavors {
+    }
 }
 
-makeJar.dependsOn(clearJar, build)
+apply from: "https://raw.githubusercontent.com/android-plugin/gradle-plugin/master/buildPlugin.gradle"
