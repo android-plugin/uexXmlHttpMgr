@@ -17,11 +17,13 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -268,7 +270,7 @@ public class EHttpPost extends Thread implements HttpTask, HttpClientListener {
 
     private String finish(String curUrl) throws IOException {
         String response = null;
-        if (mBody==null) {
+        if (mMultiData!=null&&containOctet()) {
             writer.flush();
             writer.append("--" + boundary + "--").append(LINE_FEED);
         }
@@ -379,9 +381,33 @@ public class EHttpPost extends Thread implements HttpTask, HttpClientListener {
 
 
     private void createFormEntity() {
-        for (HPair pair : mMultiData) {
-            addFormField(pair.key, pair.value);
+        try {
+            writer.write(getQuery(mMultiData));
+        } catch (UnsupportedEncodingException e) {
+            if (BDebug.DEBUG) {
+                e.printStackTrace();
+            }
         }
+    }
+
+    private String getQuery(List<HPair> params) throws UnsupportedEncodingException
+    {
+        StringBuilder result = new StringBuilder();
+        boolean first = true;
+
+        for (HPair pair : params)
+        {
+            if (first)
+                first = false;
+            else
+                result.append("&");
+
+            result.append(URLEncoder.encode(pair.key,charset));
+            result.append("=");
+            result.append(URLEncoder.encode(pair.value,charset));
+        }
+
+        return result.toString();
     }
 
     private void createInputStemEntity() throws IOException {
