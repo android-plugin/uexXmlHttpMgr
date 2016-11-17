@@ -401,7 +401,7 @@ public class EUExXmlHttpMgr extends EUExBase {
             callbackToJs(onDataCallbackId,false,1,inResult,responseCode, response);
         }else{
             String js = SCRIPT_HEADER + "if(" + onFunction + "){" + onFunction
-                    + "(" + inOpCode + "," + 1 + ",'" + inResult + "'," + responseCode + ",'" + response.toString() + "');}";
+                    + "(" + inOpCode + "," + 1 + ",'" + inResult + "'," + responseCode + ",'" + BUtility.transcoding(response.toString()) + "');}";
             onCallback(js);
         }
     }
@@ -412,7 +412,7 @@ public class EUExXmlHttpMgr extends EUExBase {
             callbackToJs(onDataCallbackId,false,-1,inResult,responseCode,response);
         }else{
             String js = SCRIPT_HEADER + "if(" + onFunction + "){" + onFunction
-                    + "(" + inOpCode + "," + (-1) + ",'" + inResult + "'," + responseCode + ",'" + response + "');}";
+                    + "(" + inOpCode + "," + (-1) + ",'" + inResult + "'," + responseCode + ",'" + BUtility.transcoding(response) + "');}";
             onCallback(js);
         }
         if (onProgressCallbackId!=-1){
