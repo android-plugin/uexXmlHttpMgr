@@ -2,18 +2,17 @@ package org.zywx.wbpalmstar.plugin.uexmultiHttp;
 
 import android.os.Process;
 
+import org.apache.commons.io.IOUtils;
 import org.json.JSONObject;
 import org.zywx.wbpalmstar.base.BDebug;
 import org.zywx.wbpalmstar.base.BUtility;
 import org.zywx.wbpalmstar.platform.certificates.Http;
 import org.zywx.wbpalmstar.widgetone.dataservice.WWidgetData;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
@@ -32,6 +31,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
+import java.util.zip.GZIPInputStream;
 
 public class EHttpPost extends Thread implements HttpTask, HttpClientListener {
     private String boundary;
@@ -221,9 +221,19 @@ public class EHttpPost extends Thread implements HttpTask, HttpClientListener {
                 result = EUExXmlHttpMgr.CONNECT_FAIL_CONNECTION_FAILURE;
             }
         } finally {
+            if (null != mInStream) {
+                try {
+                    mInStream.close();
+                } catch (IOException e) {
+                    if (BDebug.DEBUG) {
+                        e.printStackTrace();
+                    }
+                }
+            }
             if (mConnection!=null) {
                 mConnection.disconnect();
             }
+
         }
         mXmlHttpMgr.onFinish(mXmlHttpID);
         if (mCancelled) {
@@ -268,7 +278,7 @@ public class EHttpPost extends Thread implements HttpTask, HttpClientListener {
         }
     }
 
-    private String finish(String curUrl) throws IOException {
+    private String finish(String curUrl) throws Exception {
         String response = null;
         if (mMultiData!=null&&containOctet()) {
             writer.flush();
@@ -280,16 +290,10 @@ public class EHttpPost extends Thread implements HttpTask, HttpClientListener {
         mXmlHttpMgr.printHeader(responseCode, mXmlHttpID, curUrl, false, headers);
         switch (responseCode) {
             case HttpURLConnection.HTTP_OK:
-                InputStream is = mConnection.getInputStream();
-                BufferedReader reader = new BufferedReader(new InputStreamReader(is, charset));
-                StringBuilder sb = new StringBuilder();
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    sb.append(line);
-                }
-                response = sb.toString();
-                is.close();
-                reader.close();
+
+                byte[] bResult = toByteArray(mConnection);
+                response = BUtility.transcoding(new String(bResult, HTTPConst.UTF_8));
+
                 mConnection.disconnect();
                 break;
             case HttpURLConnection.HTTP_MOVED_PERM:
@@ -309,6 +313,28 @@ public class EHttpPost extends Thread implements HttpTask, HttpClientListener {
         }
         writer.close();
         return response;
+    }
+
+    private byte[] toByteArray(HttpURLConnection conn) throws Exception {
+        if (null == conn) {
+            return new byte[]{};
+        }
+        mInStream = conn.getInputStream();
+        if (mInStream == null) {
+            return new byte[]{};
+        }
+        long len = conn.getContentLength();
+        if (len > Integer.MAX_VALUE) {
+            throw new Exception(
+                    "HTTP entity too large to be buffered in memory");
+        }
+        String contentEncoding = conn.getContentEncoding();
+        if (null != contentEncoding) {
+            if ("gzip".equalsIgnoreCase(contentEncoding)) {
+                mInStream = new GZIPInputStream(mInStream, 2048);
+            }
+        }
+        return IOUtils.toByteArray(mInStream);
     }
 
     private void handleCookie(String url) {
