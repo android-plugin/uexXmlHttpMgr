@@ -1,7 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <uexplugins>
-    <plugin build="23" uexName="uexXmlHttpMgr" version="4.0.0">
-        <info>23:4.0</info>
+    <plugin build="24" uexName="uexXmlHttpMgr" version="4.0.1">
+        <info>24:修复cookie 的问题</info>
+        <build>23:4.0</build>
         <build>22:支持后台运行插件。</build>
         <build>21:修改请求对象唯一标识符按String类型处理。</build>
         <build>20:增加新的 header以及plugin里面的子应用的appId和appkey都按照主应用为准</build>
