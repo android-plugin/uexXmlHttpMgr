@@ -213,7 +213,9 @@ public class EHttpPost extends Thread implements HttpTask, HttpClientListener {
             handleCookie(curUrl);
             isSuccess = true;
         } catch (Exception e) {
-            e.printStackTrace();
+            if (BDebug.DEBUG){
+                e.printStackTrace();
+            }
             isSuccess = false;
             if (e instanceof SocketTimeoutException) {
                 result = EUExXmlHttpMgr.CONNECT_FAIL_TIMEDOUT;
@@ -343,7 +345,7 @@ public class EHttpPost extends Thread implements HttpTask, HttpClientListener {
         Set<String> set=map.keySet();
         for (Iterator iterator = set.iterator(); iterator.hasNext();) {
             String key = (String) iterator.next();
-            if (key.equals(HTTPConst.SET_COOKIE)) {
+            if (HTTPConst.SET_COOKIE.equals(key)) {
                 List<String> list = map.get(key);
 
                 for (String setCookie : list) {
