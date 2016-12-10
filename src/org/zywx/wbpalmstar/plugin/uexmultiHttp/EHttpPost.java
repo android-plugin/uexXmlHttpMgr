@@ -338,8 +338,19 @@ public class EHttpPost extends Thread implements HttpTask, HttpClientListener {
     }
 
     private void handleCookie(String url) {
-        String setCookie = mConnection.getHeaderField(HTTPConst.SET_COOKIE);
-        mXmlHttpMgr.setCookie(url, setCookie);
+
+        Map<String,List<String>> map=mConnection.getHeaderFields();
+        Set<String> set=map.keySet();
+        for (Iterator iterator = set.iterator(); iterator.hasNext();) {
+            String key = (String) iterator.next();
+            if (key.equals(HTTPConst.SET_COOKIE)) {
+                List<String> list = map.get(key);
+
+                for (String setCookie : list) {
+                    mXmlHttpMgr.setCookie(url, setCookie);
+                }
+            }
+        }
         mXmlHttpMgr.setCookie(url, mConnection.getHeaderField(HTTPConst.COOKIE));
         mXmlHttpMgr.setCookie(url, mConnection.getHeaderField(HTTPConst.COOKIE2));
     }
