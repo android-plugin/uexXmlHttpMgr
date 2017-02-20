@@ -440,8 +440,13 @@ public class EUExXmlHttpMgr extends EUExBase {
             synchronized (mXmlHttpMap) {
                 Set<Entry<Object, HttpTask>> entrys = mXmlHttpMap.entrySet();
                 for (Map.Entry<Object, HttpTask> entry : entrys) {
-                    HttpTask temp = entry.getValue();
-                    temp.cancel();
+                    final HttpTask temp = entry.getValue();
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            temp.cancel();
+                        }
+                    }).start();
                 }
                 mXmlHttpMap.clear();
             }

@@ -234,6 +234,7 @@ public class EHttpPost extends Thread implements HttpTask, HttpClientListener {
             }
             if (mConnection!=null) {
                 mConnection.disconnect();
+                mConnection=null;
             }
 
         }
