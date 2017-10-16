@@ -35,6 +35,11 @@ public class HSSLSocketFactory extends SSLSocketFactory {
 		tMgrs = new TrustManager[]{tMgr};
 		SecureRandom secureRandom = new java.security.SecureRandom();
 		mSSLContext.init(kMgrs, tMgrs, secureRandom);
+        if (!Http.isCheckTrustCert()) {
+            setHostnameVerifier(new HX509HostnameVerifier());
+        } else {
+            setHostnameVerifier(STRICT_HOSTNAME_VERIFIER);
+        }
 	}
 
 	@Override

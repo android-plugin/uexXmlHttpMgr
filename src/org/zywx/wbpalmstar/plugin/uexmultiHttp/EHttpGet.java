@@ -153,8 +153,13 @@ public class EHttpGet extends Thread implements HttpTask {
 					ssFact = Http.getSSLSocketFactory();
 				}
 				((HttpsURLConnection) mConnection).setSSLSocketFactory(ssFact);
-				((HttpsURLConnection) mConnection)
-						.setHostnameVerifier(new HX509HostnameVerifier());
+				if (!Http.isCheckTrustCert()) {
+					((HttpsURLConnection) mConnection)
+							.setHostnameVerifier(new HX509HostnameVerifier());
+				} else {
+					((HttpsURLConnection) mConnection)
+							.setHostnameVerifier(HSSLSocketFactory.STRICT_HOSTNAME_VERIFIER);
+				}
 				https = true;
 				break;
 			}

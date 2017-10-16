@@ -4,6 +4,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.security.KeyStore;
 import java.util.HashMap;
 import org.apache.http.HttpVersion;
@@ -36,7 +38,6 @@ public class Http {
 			KeyStore trustStore = KeyStore.getInstance(keyType);
 			trustStore.load(null, null);
 			SSLSocketFactory socketFact = new HSSLSocketFactory(trustStore, null);
-			socketFact.setHostnameVerifier(new HX509HostnameVerifier());
 			SchemeRegistry registry = new SchemeRegistry();
 			registry.register(new Scheme("http", PlainSocketFactory.getSocketFactory(), 80));
 			registry.register(new Scheme("https", socketFact, 443));
@@ -53,7 +54,7 @@ public class Http {
 			return new DefaultHttpClient(ccm, params);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return null;
+            return getHttpClient(mTimeOut);
 		}
 	}
 	
@@ -70,7 +71,6 @@ public class Http {
 				KEY_STORE.put(keyName, ksP12);
 	        } 
 			SSLSocketFactory socketFact = new HSSLSocketFactory(ksP12, cPassWord);
-			socketFact.setHostnameVerifier(new HX509HostnameVerifier());
 			SchemeRegistry registry = new SchemeRegistry();
 			registry.register(new Scheme("http", PlainSocketFactory.getSocketFactory(), 80));
 			registry.register(new Scheme("https", socketFact, 443));
@@ -87,7 +87,7 @@ public class Http {
 			return new DefaultHttpClient(ccm, params);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return null;
+            return getHttpsClient(mTimeOut);
 		}finally{
 			if(null != inStream){
 				try {
@@ -149,6 +149,7 @@ public class Http {
 	        ssSocketFactory = new HNetSSLSocketFactory(ksP12, cPassWord);
 		}catch (Exception e) {
 			e.printStackTrace();
+            ssSocketFactory = getSSLSocketFactory();
 		}
 		return ssSocketFactory;
 	}
@@ -163,5 +164,22 @@ public class Http {
 			e.printStackTrace();
 		}
 		return ssSocketFactory;
+	}
+
+	public static boolean isCheckTrustCert() {
+		boolean isCheckTrustCert = false;
+		try {
+			Method m = org.zywx.wbpalmstar.platform.certificates.Http.class.getMethod("isCheckTrustCert", new Class[0]);
+			isCheckTrustCert = (Boolean) m.invoke(null, new Object[]{});
+		} catch (NoSuchMethodException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+		}
+		return isCheckTrustCert;
 	}
 }
