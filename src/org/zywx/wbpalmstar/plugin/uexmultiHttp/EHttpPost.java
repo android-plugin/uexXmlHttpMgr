@@ -171,20 +171,20 @@ public class EHttpPost extends Thread implements HttpTask, HttpClientListener {
             } else {
                 mConnection = (HttpURLConnection) mURL.openConnection();
             }
+            mConnection.setConnectTimeout(mTimeOut);
+            mConnection.setUseCaches(false);
+            mConnection.setDoOutput(true);
+            mConnection.setDoInput(true);
+            addHeaders(curUrl);
         } catch (MalformedURLException e) {
             if (BDebug.DEBUG) {
                 e.printStackTrace();
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             if (BDebug.DEBUG) {
                 e.printStackTrace();
             }
         }
-        mConnection.setConnectTimeout(mTimeOut);
-        mConnection.setUseCaches(false);
-        mConnection.setDoOutput(true);
-        mConnection.setDoInput(true);
-        addHeaders(curUrl);
 
         try {
 
@@ -226,7 +226,7 @@ public class EHttpPost extends Thread implements HttpTask, HttpClientListener {
             if (null != mInStream) {
                 try {
                     mInStream.close();
-                } catch (IOException e) {
+                } catch (Exception e) {
                     if (BDebug.DEBUG) {
                         e.printStackTrace();
                     }
@@ -496,7 +496,7 @@ public class EHttpPost extends Thread implements HttpTask, HttpClientListener {
         if (null != mInStream) {
             try {
                 mInStream.close();
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }

@@ -1,7 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <uexplugins>
-    <plugin build="1" uexName="uexXmlHttpMgr" version="4.0.2">
-        <info>2:修复某些异常情况下导致的崩溃问题</info>
+    <plugin build="2017091301" uexName="uexXmlHttpMgr" version="4.0.3">
+        <info>3:修复返回界面时HTTP请求取消崩溃问题</info>
+        <build>2:修复某些异常情况下导致的崩溃问题</build>
         <build>1:修复cookie 的问题</build>
         <build>0:4.0</build>
     </plugin>
