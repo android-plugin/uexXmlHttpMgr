@@ -346,7 +346,8 @@ public class EHttpPost extends Thread implements HttpTask, HttpClientListener {
         Set<String> set=map.keySet();
         for (Iterator iterator = set.iterator(); iterator.hasNext();) {
             String key = (String) iterator.next();
-            if (HTTPConst.SET_COOKIE.equals(key)) {
+            // 由equals改为equalsIgnoreCase，为了兼容不同的服务返回Set-Cookie的各种大小写
+            if (HTTPConst.SET_COOKIE.equalsIgnoreCase(key)) {
                 List<String> list = map.get(key);
 
                 for (String setCookie : list) {
