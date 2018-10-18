@@ -550,7 +550,9 @@ public class EUExXmlHttpMgr extends EUExBase {
         String indexUrl = widgetData.m_indexUrl;
         Log.i("uexXmlHttpMgr", "m_indexUrl:" + indexUrl);
         if (widgetData.m_wgtType != 0) {
-            if (indexUrl.contains("widget/plugin")) {
+            if (indexUrl.contains("widget/plugin")
+                    || widgetData.m_wgtType == 3) {
+                // 包含widget/plugin就应该是plugin类型的子应用了，但是如果plugin子应用在线调试的话，首页可能不是本地的，故再判断新引擎的wgtType等于3，则也是plugin子应用
                 return view.getRootWidget();
             }
         }

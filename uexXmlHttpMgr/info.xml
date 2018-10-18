@@ -1,7 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <uexplugins>
-    <plugin build="2017091301" uexName="uexXmlHttpMgr" version="4.0.3">
-        <info>3:修复返回界面时HTTP请求取消崩溃问题</info>
+    <plugin build="2018101802" uexName="uexXmlHttpMgr" version="4.0.5">
+        <info>5:兼容plugin子应用中首页配置为在线调试页面时的验证头错误问题</info>
+        <build>4:兼容个别形式的cookie无法被正确保存和携带的问题</build>
+        <build>3:修复返回界面时HTTP请求取消崩溃问题</build>
         <build>2:修复某些异常情况下导致的崩溃问题</build>
         <build>1:修复cookie 的问题</build>
         <build>0:4.0</build>
