@@ -63,8 +63,10 @@ public class EHttpPost extends Thread implements HttpTask, HttpClientListener {
     private WWidgetData curWData = null;
     private int responseCode = -1;
     private String responseMessage = "";
+    private String responseError = "";
     private String charset = HTTPConst.UTF_8;
     private OutputStream outputStream;
+    private InputStream mErrorInStream;
 
     private long mTotalSize = 0;
     private int mUploadedSize = 0;
@@ -267,7 +269,7 @@ public class EHttpPost extends Thread implements HttpTask, HttpClientListener {
                 jsonObject.put(EUExXmlHttpMgr.PARAMS_JSON_KEY_STATUSMESSAGE,
                         responseMessage);
                 jsonObject
-                        .put(EUExXmlHttpMgr.PARAMS_JSON_KEY_RESPONSEERROR, "");
+                        .put(EUExXmlHttpMgr.PARAMS_JSON_KEY_RESPONSEERROR, responseError);
             } catch (Exception e) {
                 if (BDebug.DEBUG){
                     e.printStackTrace();
@@ -282,13 +284,14 @@ public class EHttpPost extends Thread implements HttpTask, HttpClientListener {
     }
 
     private String finish(String curUrl) throws Exception {
-        String response = null;
+        String response = "";
         if (mMultiData!=null&&containOctet()) {
             writer.flush();
             writer.append("--" + boundary + "--").append(LINE_FEED);
         }
         writer.close();
         responseCode = mConnection.getResponseCode();
+        responseMessage = mConnection.getResponseMessage();
         headers=mConnection.getHeaderFields();
         mXmlHttpMgr.printHeader(responseCode, mXmlHttpID, curUrl, false, headers);
         switch (responseCode) {
@@ -312,6 +315,8 @@ public class EHttpPost extends Thread implements HttpTask, HttpClientListener {
                 }
                 break;
             default:
+                byte[] bError = toErrorByteArray(mConnection);
+                responseError = BUtility.transcoding(new String(bError, HTTPConst.UTF_8));
                 break;
         }
         writer.close();
@@ -338,6 +343,24 @@ public class EHttpPost extends Thread implements HttpTask, HttpClientListener {
             }
         }
         return IOUtils.toByteArray(mInStream);
+    }
+
+    private byte[] toErrorByteArray(HttpURLConnection conn) throws Exception {
+        if (null == conn) {
+            return new byte[]{};
+        }
+        mErrorInStream = conn.getErrorStream();
+        if (mErrorInStream == null) {
+            return new byte[]{};
+        }
+        String contentEncoding = conn.getContentEncoding();
+        boolean gzip = false;
+        if (null != contentEncoding) {
+            if ("gzip".equalsIgnoreCase(contentEncoding)) {
+                mErrorInStream = new GZIPInputStream(mErrorInStream, 2048);
+            }
+        }
+        return IOUtils.toByteArray(mErrorInStream);
     }
 
     private void handleCookie(String url) {
