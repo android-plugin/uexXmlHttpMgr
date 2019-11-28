@@ -15,5 +15,6 @@
         <method name="getCookie"/>
         <method name="clearCookie"/>
         <method name="create"/>
+        <method name="setCookie"/>
     </plugin>
 </uexplugins>

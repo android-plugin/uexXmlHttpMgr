@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.text.TextUtils;
 import android.util.Log;
 import android.webkit.CookieManager;
 
@@ -324,6 +325,17 @@ public class EUExXmlHttpMgr extends EUExBase {
             xmlHttp.setBody(inContent);
         }
         return true;
+    }
+
+    public void setCookie(String param[]){
+        if (param.length <2) {
+            return;
+        }
+        String url=this.getCookie(param[0]);
+        String cookie=this.getCookie(param[1]);
+        if(!TextUtils.isEmpty(url)& !TextUtils.isEmpty(cookie)) {
+            this.setCookie(url,cookie);
+        }
     }
 
     public String getCookie(String parm[]) {
