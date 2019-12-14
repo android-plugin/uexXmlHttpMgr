@@ -15,6 +15,7 @@
         <method name="getCookie"/>
         <method name="clearCookie"/>
         <method name="create"/>
+        <method name="setCookie"/>
     </plugin>
     <plugin
         className="org.zywx.wbpalmstar.plugin.uexfilemgr.EUExFileMgr"
