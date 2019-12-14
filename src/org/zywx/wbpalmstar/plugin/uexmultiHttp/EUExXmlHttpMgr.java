@@ -331,8 +331,8 @@ public class EUExXmlHttpMgr extends EUExBase {
         if (param.length <2) {
             return;
         }
-        String url=this.getCookie(param[0]);
-        String cookie=this.getCookie(param[1]);
+        String url=param[0];
+        String cookie=param[1];
         if(!TextUtils.isEmpty(url)& !TextUtils.isEmpty(cookie)) {
             this.setCookie(url,cookie);
         }
