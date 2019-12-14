@@ -1,9 +1,10 @@
 buildscript {
     repositories {
         jcenter()
+        google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.2.2'
+        classpath 'com.android.tools.build:gradle:3.0.1'
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
@@ -17,20 +18,21 @@ repositories {
     flatDir {
         dirs 'libs'
     }
+    google()
     maven {
         url 'https://raw.githubusercontent.com/android-plugin/mvn-repo/master/'
     }
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: '*.jar')
-    compile 'org.appcan:engine:+:systemRelease@aar'
-    compile(name: "uexFileMgr-debug", ext: 'aar')
+    implementation fileTree(dir: 'libs', include: '*.jar')
+    implementation 'org.appcan:engine:4.4.27'
+//    compile(name: "uexFileMgr-debug", ext: 'aar')
 }
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion "23.0.2"
+    compileSdkVersion 28
+//    buildToolsVersion "26.0.2"
     lintOptions {
         abortOnError false
     }
@@ -59,9 +61,11 @@ android {
         release.setRoot('build-types/release')
     }
     defaultConfig {
-        minSdkVersion 14
+        minSdkVersion 18
+        targetSdkVersion 28
         applicationId 'org.zywx.wbpalmstar.widgetone.uexxmlhttpmgr'
         multiDexEnabled true
+        resValue "string", "app_name", "uexXmlHttpMgr测试"
     }
     productFlavors {
     }

@@ -1,7 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <uexplugins>
-    <plugin build="2019061402" uexName="uexXmlHttpMgr" version="4.0.7">
-        <info>7:添加setCookie方法</info>
+    <plugin build="2019121402" uexName="uexXmlHttpMgr" version="4.0.7.2">
+        <info>7.2:修复setCookie方法处理错误导致无法生效的问题</info>
+        <build>7:添加setCookie方法</build>
         <info>6.2:修复post请求非200时，responseError字段和responseMessage都为空的问题</info>
         <build>5:兼容plugin子应用中首页配置为在线调试页面时的验证头错误问题</build>
         <build>4:兼容个别形式的cookie无法被正确保存和携带的问题</build>
