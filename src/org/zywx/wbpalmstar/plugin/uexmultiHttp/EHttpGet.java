@@ -7,7 +7,6 @@ import org.apache.commons.io.IOUtils;
 import org.json.JSONObject;
 import org.zywx.wbpalmstar.base.BDebug;
 import org.zywx.wbpalmstar.base.BUtility;
-import org.zywx.wbpalmstar.platform.certificates.HX509HostnameVerifier;
 import org.zywx.wbpalmstar.platform.certificates.Http;
 import org.zywx.wbpalmstar.widgetone.dataservice.WWidgetData;
 
@@ -24,8 +23,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.zip.GZIPInputStream;
-
-import javax.net.ssl.HttpsURLConnection;
 
 public class EHttpGet extends Thread implements HttpTask {
 
@@ -146,17 +143,12 @@ public class EHttpGet extends Thread implements HttpTask {
                     mConnection = (HttpURLConnection) mClient.openConnection();
                     break;
                 case F_SHEM_ID_HTTPS:
-                    mConnection = (HttpsURLConnection) mClient.openConnection();
-                    javax.net.ssl.SSLSocketFactory ssFact = null;
                     if (mHasLocalCert) {
-                        ssFact = Http.getSSLSocketFactoryWithCert(mCertPassword,
+                        mConnection = Http.getHttpsURLConnectionWithCert(mClient, mCertPassword,
                                 mCertPath, mXmlHttpMgr.getContext());
                     } else {
-                        ssFact = Http.getSSLSocketFactory();
+                        mConnection = Http.getHttpsURLConnection(curUrl);
                     }
-                    ((HttpsURLConnection) mConnection).setSSLSocketFactory(ssFact);
-                    ((HttpsURLConnection) mConnection)
-                            .setHostnameVerifier(new HX509HostnameVerifier());
                     https = true;
                     break;
             }

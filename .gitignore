@@ -2,7 +2,7 @@
 *.apk
 *.ap_
 
-# Files for the ART/Dalvik VM
+# Files for the Dalvik VM
 *.dex
 
 # Java class files
@@ -16,7 +16,6 @@ out/
 # Gradle files
 .gradle/
 build/
-/*/build/
 
 # Local configuration file (sdk path, etc)
 local.properties
@@ -33,19 +32,22 @@ proguard/
 # Android Studio captures folder
 captures/
 
-# Intellij
-*.iml
+# Android Studio Configs
 .idea/
+*.iml
 
-# Keystore files
-*.jks
+### AndroidStudio Patch ###
 
-#Windows
-Thumbs.db
+!/gradle/wrapper/gradle-wrapper.jar
 
-#MAC
-.DS_Stor
+# Legacy Eclipse project files
+.classpath
+.project
+.cproject
+.settings/
 
-gradle/
-gradlew
-gradlew.bat
+### AppCan Butterfly Plugins Ignore ###
+
+uex*/dex/*.jar
+uex*/jar/plugin_uex*.jar
+uex*.zip
