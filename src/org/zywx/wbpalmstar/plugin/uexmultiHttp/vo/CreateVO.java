@@ -12,6 +12,6 @@ public class CreateVO {
 
     public String url;
 
-    public int timeOut;
+    public int timeout;
 
 }

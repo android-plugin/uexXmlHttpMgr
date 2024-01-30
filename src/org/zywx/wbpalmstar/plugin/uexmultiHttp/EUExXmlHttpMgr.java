@@ -74,7 +74,7 @@ public class EUExXmlHttpMgr extends EUExBase {
         String inTimeout = parm[3];
         int timeout = 1000 * 30;
         try {
-            if (inTimeout != null && Integer.valueOf(inTimeout) != 0) {
+            if (inTimeout != null) {
                 timeout = Integer.valueOf(inTimeout);
             }
         } catch (Exception e) {
@@ -116,7 +116,7 @@ public class EUExXmlHttpMgr extends EUExBase {
                 createVO.id,
                 createVO.method,
                 createVO.url,
-                String.valueOf(createVO.timeOut)
+                String.valueOf(createVO.timeout)
         });
         return result?createVO.id:null;
     }
