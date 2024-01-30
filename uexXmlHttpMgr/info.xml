@@ -1,7 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <uexplugins>
-    <plugin uexName="uexXmlHttpMgr" version="4.4.8" build="2021031101">
-        <info>8:Http类改为引用引擎内的逻辑，降低部分耦合，修复引擎适配问题</info>
+    <plugin uexName="uexXmlHttpMgr" version="4.4.9" build="2024013001">
+        <info>9:修复timeOut参数大小写问题，与文档统一为timeout。传入0为无限等待，不传默认30秒。</info>
+        <build>8:Http类改为引用引擎内的逻辑，降低部分耦合，修复引擎适配问题</build>
         <build>7.2:修复setCookie方法处理错误导致无法生效的问题</build>
         <build>7:添加setCookie方法</build>
         <build>6.2:修复post请求非200时，responseError字段和responseMessage都为空的问题</build>
